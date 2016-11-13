@@ -3,9 +3,6 @@ package com.ericarao.dnd.core;
 import java.io.*;
 import java.net.Socket;
 
-/**
- * Created by Doraemon on 10/26/16.
- */
 public class ClientHandler implements Runnable {
     //Variables
     private final Socket socket;

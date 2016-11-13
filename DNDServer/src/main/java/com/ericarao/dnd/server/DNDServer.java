@@ -4,10 +4,6 @@ import com.ericarao.dnd.core.NetworkServer;
 
 import java.util.Scanner;
 
-
-/**
- * Created by Doraemon on 10/26/16.
- */
 public class DNDServer {
 
     public static void main(String args[]) {

@@ -6,9 +6,6 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * Created by Doraemon on 10/26/16.
- */
 public class NetworkServer {
 
     //Variables
