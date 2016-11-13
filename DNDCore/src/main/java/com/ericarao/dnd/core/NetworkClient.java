@@ -1,7 +1,5 @@
 package com.ericarao.dnd.core;
 
-import com.ericarao.dnd.core.model.RegisterClient;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

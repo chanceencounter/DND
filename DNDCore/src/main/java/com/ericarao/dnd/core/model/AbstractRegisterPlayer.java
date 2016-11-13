@@ -4,7 +4,7 @@ import org.immutables.value.Value;
 
 @DndStyle
 @Value.Immutable
-public abstract class AbstractRegisterClient {
+public abstract class AbstractRegisterPlayer {
     public abstract String getPlayerName();
     public abstract String getPlayerClass();
     public abstract int getPlayerLevel();
