@@ -38,7 +38,9 @@ public class NetworkServer {
             System.out.println("Could not start server. " + e.getMessage());
             throw new RuntimeException(e);
         } finally {
-
+            if (executorService != null && !executorService.isShutdown()) {
+                executorService.shutdown();
+            }
         }
     }
 }

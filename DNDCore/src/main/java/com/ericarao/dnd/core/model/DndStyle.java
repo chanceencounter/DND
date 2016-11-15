@@ -1,5 +1,6 @@
 package com.ericarao.dnd.core.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.immutables.value.Value;
 
 import java.lang.annotation.ElementType;
@@ -17,5 +18,6 @@ import java.lang.annotation.Target;
         optionalAcceptNullable = true,
         forceJacksonPropertyNames = false,
         visibility = Value.Style.ImplementationVisibility.SAME)
+@JsonSerialize
 public @interface DndStyle {
 }
