@@ -1,4 +1,4 @@
-package com.ericarao.dnd.core.View;
+package com.ericarao.dnd.server;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
