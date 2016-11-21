@@ -156,14 +156,21 @@ public class LoginView extends Application {
         TextField idTextField = new TextField();
         dmLoginGridPane.add(idTextField, 1, 1);
 
+        Label numLabel = new Label("Number of Players:");
+        dmLoginGridPane.add(numLabel, 0, 2);
+
+        TextField numTextField = new TextField();
+        dmLoginGridPane.add(numTextField, 1, 2);
+
         Label pw = new Label("Room Password:");
-        dmLoginGridPane.add(pw, 0, 2);
+        dmLoginGridPane.add(pw, 0, 3);
 
         PasswordField pwBox = new PasswordField();
-        dmLoginGridPane.add(pwBox, 1, 2);
+        dmLoginGridPane.add(pwBox, 1, 3);
+
 
         Button btn = new Button("Sign in");
-        HBox hbBtn = new HBox(10);
+        HBox hbBtn = new HBox(4);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
         dmLoginGridPane.add(hbBtn, 1, 4);
