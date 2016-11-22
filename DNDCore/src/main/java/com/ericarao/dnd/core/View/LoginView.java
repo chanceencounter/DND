@@ -3,9 +3,6 @@ package com.ericarao.dnd.core.View;
 import com.ericarao.dnd.core.model.DMLoginCredentials;
 import com.ericarao.dnd.core.model.PlayerLoginCredentials;
 import javafx.application.Application;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import static javafx.geometry.HPos.RIGHT;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,13 +11,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class LoginView extends Application {
+
+    private InputValidation inputValidationNum = new InputValidation();
 
     @Override
     public void start(Stage loginStage) {
@@ -165,7 +163,10 @@ public class LoginView extends Application {
         Label numLabel = new Label("Number of Players:");
         dmLoginGridPane.add(numLabel, 0, 2);
         TextField numTextField = new TextField();
+        //Number Input Validation
+        inputValidationNum.numberValidation(numTextField);
         dmLoginGridPane.add(numTextField, 1, 2);
+        dmLoginGridPane.add(new Label(inputValidationNum.valid(numTextField)), 2, 2);
 
         Label pw = new Label("Room Password:");
         dmLoginGridPane.add(pw, 0, 3);

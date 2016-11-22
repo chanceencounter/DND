@@ -2,6 +2,7 @@ package com.ericarao.dnd.core.View;
 
 import com.ericarao.dnd.core.NetworkClient;
 import com.ericarao.dnd.core.model.ClientUpdate;
+import com.ericarao.dnd.core.model.NetworkPacket;
 import com.ericarao.dnd.core.model.RegisterPlayer;
 import javafx.application.Application;
 import static javafx.geometry.HPos.RIGHT;
@@ -135,11 +136,11 @@ public class ClientView extends Application {
         clientStage.show();
     }
 
-    private void handleClientUpdate(ClientUpdate clientUpdate) {
-        Platform.runLater(() -> handleClientUpdateInternal(clientUpdate));
+    private void handleClientUpdate(NetworkPacket networkPacket) {
+        Platform.runLater(() -> handleClientUpdateInternal(networkPacket));
     }
 
-    private void handleClientUpdateInternal(ClientUpdate clientUpdate) {
+    private void handleClientUpdateInternal(NetworkPacket networkPacket) {
         // here we can safely update the UI
     }
 
