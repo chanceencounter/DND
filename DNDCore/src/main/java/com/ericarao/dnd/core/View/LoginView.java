@@ -1,5 +1,7 @@
 package com.ericarao.dnd.core.View;
 
+import com.ericarao.dnd.core.model.DMLoginCredentials;
+import com.ericarao.dnd.core.model.PlayerLoginCredentials;
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -93,25 +95,21 @@ public class LoginView extends Application {
 
         Label idLabel = new Label("Room ID:");
         playerLoginGridPane.add(idLabel, 0, 1);
-
         TextField idTextField = new TextField();
         playerLoginGridPane.add(idTextField, 1, 1);
 
         Label ipAddressLabel = new Label("Room IP:");
         playerLoginGridPane.add(ipAddressLabel, 0, 2);
-
         TextField ipTextField = new TextField();
         playerLoginGridPane.add(ipTextField, 1, 2);
 
         Label userName = new Label("Player Name:");
         playerLoginGridPane.add(userName, 0, 3);
-
         TextField userTextField = new TextField();
         playerLoginGridPane.add(userTextField, 1, 3);
 
         Label pw = new Label("Room Password:");
         playerLoginGridPane.add(pw, 0, 4);
-
         PasswordField pwBox = new PasswordField();
         playerLoginGridPane.add(pwBox, 1, 4);
 
@@ -127,14 +125,23 @@ public class LoginView extends Application {
         playerLoginGridPane.setHalignment(actiontarget, RIGHT);
         actiontarget.setId("actiontarget");
 
+        Scene scene = new Scene(playerLoginGridPane, 300, 275);
+        loginStage.setScene(scene);
+        loginStage.show();
+
         btn.setOnAction(e -> {
             actiontarget.setFill(Color.FIREBRICK);
             actiontarget.setText("Sign in button pressed");
+            PlayerLoginCredentials newPlayer = PlayerLoginCredentials.builder()
+                    .setDmIP(ipTextField.getText())
+                    .setPlayerName(userTextField.getText())
+                    .setRoomName(idTextField.getText())
+                    .setRoomPassword(pwBox.getText())
+                    .build();
+
         });
 
-        Scene scene = new Scene(playerLoginGridPane, 300, 275);
-        loginStage.setScene(scene);
-        //loginStage.show();
+
 
         return playerLoginGridPane;
     }
@@ -152,20 +159,17 @@ public class LoginView extends Application {
 
         Label idLabel = new Label("Room ID:");
         dmLoginGridPane.add(idLabel, 0, 1);
-
         TextField idTextField = new TextField();
         dmLoginGridPane.add(idTextField, 1, 1);
 
         Label numLabel = new Label("Number of Players:");
         dmLoginGridPane.add(numLabel, 0, 2);
-
         TextField numTextField = new TextField();
         dmLoginGridPane.add(numTextField, 1, 2);
 
         Label pw = new Label("Room Password:");
         dmLoginGridPane.add(pw, 0, 3);
-
-        PasswordField pwBox = new PasswordField();
+        TextField pwBox = new TextField();
         dmLoginGridPane.add(pwBox, 1, 3);
 
 
@@ -184,11 +188,25 @@ public class LoginView extends Application {
         btn.setOnAction(e -> {
             actiontarget.setFill(Color.FIREBRICK);
             actiontarget.setText("Sign in button pressed");
+            DMLoginCredentials currentDM = DMLoginCredentials.builder()
+                    .setRoomName(idLabel.getText())
+                    .setNumPlayers(Integer.parseInt(numTextField.getText()))
+                    .setRoomPassword(pwBox.getText())
+                    .build();
+
+            ServerView newServerView = new ServerView();
+            newServerView.setDMLoginCredentialsObject(currentDM);
+            newServerView.start(loginStage);
+
+
+           // Scene serverViewScene = newServerView.returnView();
+            //loginStage.setScene(serverViewScene);
         });
 
-        Scene scene = new Scene(dmLoginGridPane, 300, 275);
-        loginStage.setScene(scene);
-        //loginStage.show();
+        if (loginStage.getScene() == null) {
+            Scene scene = new Scene(dmLoginGridPane, 300, 275);
+            loginStage.setScene(scene);
+        }
 
         return dmLoginGridPane;
     }

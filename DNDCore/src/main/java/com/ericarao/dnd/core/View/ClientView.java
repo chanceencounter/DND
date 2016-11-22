@@ -1,4 +1,4 @@
-package com.ericarao.dnd.client;
+package com.ericarao.dnd.core.View;
 
 import com.ericarao.dnd.core.NetworkClient;
 import com.ericarao.dnd.core.model.ClientUpdate;
