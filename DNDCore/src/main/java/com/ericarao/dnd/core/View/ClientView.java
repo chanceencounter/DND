@@ -26,7 +26,6 @@ import java.util.concurrent.Executors;
 
 public class ClientView extends Application {
 
-    private int playerHealth;
     private NetworkClient networkClient = new NetworkClient("127.0.0.1", 8000, this::handleClientUpdate);
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -137,7 +136,11 @@ public class ClientView extends Application {
     }
 
     private void handleClientUpdate(ClientUpdate clientUpdate) {
-        Platform.runLater(() -> { playerHealth = clientUpdate.getNewHealth(); });
+        Platform.runLater(() -> handleClientUpdateInternal(clientUpdate));
+    }
+
+    private void handleClientUpdateInternal(ClientUpdate clientUpdate) {
+        // here we can safely update the UI
     }
 
     public static void main(String[] args) {

@@ -197,7 +197,7 @@ public class LoginView extends Application {
             ServerView newServerView = new ServerView();
             newServerView.setDMLoginCredentialsObject(currentDM);
             newServerView.start(loginStage);
-
+            loginStage.setTitle("ServerView: DM");
 
            // Scene serverViewScene = newServerView.returnView();
             //loginStage.setScene(serverViewScene);

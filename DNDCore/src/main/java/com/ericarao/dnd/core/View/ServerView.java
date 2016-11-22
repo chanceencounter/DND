@@ -1,6 +1,5 @@
 package com.ericarao.dnd.core.View;
 
-import com.ericarao.dnd.core.NetworkClient;
 import com.ericarao.dnd.core.NetworkServer;
 import com.ericarao.dnd.core.model.ClientUpdate;
 import com.ericarao.dnd.core.model.DMLoginCredentials;
