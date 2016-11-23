@@ -5,7 +5,9 @@ import org.immutables.value.Value;
 @DndStyle
 @Value.Immutable
 public abstract class AbstractClientUpdate implements NetworkPacket {
-    public abstract int getNewHealth();
+    public abstract int getDamage();
+    public abstract String getStatusEffect();
+    public abstract int getSavingThrow();
 
     @Override
     @Value.Derived
