@@ -9,7 +9,6 @@ public class ClientHandler implements Runnable {
     //Variables
     private final Socket socket;
 
-    //
     public ClientHandler(Socket socket) {
         this.socket = socket;
     }
