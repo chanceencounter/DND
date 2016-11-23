@@ -1,9 +1,7 @@
 package com.ericarao.dnd.core.View;
 
 import com.ericarao.dnd.core.NetworkClient;
-import com.ericarao.dnd.core.model.ClientUpdate;
-import com.ericarao.dnd.core.model.NetworkPacket;
-import com.ericarao.dnd.core.model.RegisterPlayer;
+import com.ericarao.dnd.core.model.*;
 import javafx.application.Application;
 import static javafx.geometry.HPos.RIGHT;
 
@@ -22,15 +20,24 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.net.Inet4Address;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ClientView extends Application {
+public class ClientView {
 
     private NetworkClient networkClient = new NetworkClient("127.0.0.1", 8000, this::handleClientUpdate);
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private PlayerLoginCredentials playerLoginCredentials;
+    private DMLoginCredentials dmLoginCredentials;
+    private ClientUpdate clientUpdate;
+    private String dmIPAddress;
+    private String dmPassword;
+    private String inputIPAddress;
+    private String inputPassword;
+    private Scene scene;
 
-    @Override
+    //Start ClientView
     public void start(Stage clientStage) {
         executorService.submit(() -> networkClient.run());
 
@@ -136,6 +143,45 @@ public class ClientView extends Application {
         clientStage.show();
     }
 
+
+    //Method for Comparing Credentials
+    public boolean compareCredentials() {
+        return (inputPassword == dmPassword && inputIPAddress == dmIPAddress);
+    }
+
+    //Method for Setting Player Credentials from Recieved Creds.
+    public void setPlayerCredentialsObject(PlayerLoginCredentials playerCredentialsObject) {
+        this.playerLoginCredentials = playerCredentialsObject;
+        this.inputIPAddress = playerCredentialsObject.dmIP();
+        this.inputPassword = playerCredentialsObject.roomPassword();
+    }
+
+    //Method for Setting ClientUpdate
+    public void setClientUpdate(ClientUpdate clientUpdate) {
+        this.clientUpdate = clientUpdate;
+    }
+
+    //Ping DM for Credentials
+    public void pingDM(Boolean isCredentials, Inet4Address dmInet4Address) {
+        //Socket Programming take Inet4Address to contact DM
+
+        //Ping for Credentials
+        if (isCredentials) {
+            //Recieve DMLoginCredentials
+        }
+        //Ping for Player Update
+        else {
+            //Recieve ClientUpdate
+        }
+    }
+
+    //Method for Setting DM Credentials
+    public void setDMCredentialsObject(DMLoginCredentials dmLoginCredentials) {
+        this.dmLoginCredentials = dmLoginCredentials;
+        this.dmIPAddress = dmLoginCredentials.getIP();
+        this.dmPassword = dmLoginCredentials.roomPassword();
+    }
+
     private void handleClientUpdate(NetworkPacket networkPacket) {
         Platform.runLater(() -> handleClientUpdateInternal(networkPacket));
     }
@@ -144,8 +190,6 @@ public class ClientView extends Application {
         // here we can safely update the UI
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    //public static void main(String[] args) {launch(args);}
 
 }

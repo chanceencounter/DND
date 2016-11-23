@@ -2,6 +2,7 @@ package com.ericarao.dnd.core.View;
 
 import com.ericarao.dnd.core.model.DMLoginCredentials;
 import com.ericarao.dnd.core.model.PlayerLoginCredentials;
+import com.sun.deploy.util.SessionState;
 import javafx.application.Application;
 import static javafx.geometry.HPos.RIGHT;
 import javafx.geometry.Insets;
@@ -136,6 +137,9 @@ public class LoginView extends Application {
                     .setRoomName(idTextField.getText())
                     .setRoomPassword(pwBox.getText())
                     .build();
+            ClientView newClientView = new ClientView();
+            //newClientView.
+
 
         });
 
@@ -166,7 +170,7 @@ public class LoginView extends Application {
         //Number Input Validation
         inputValidationNum.numberValidation(numTextField);
         dmLoginGridPane.add(numTextField, 1, 2);
-        dmLoginGridPane.add(new Label(inputValidationNum.valid(numTextField)), 2, 2);
+//        dmLoginGridPane.add(new Label(inputValidationNum.valid(numTextField)), 2, 2);
 
         Label pw = new Label("Room Password:");
         dmLoginGridPane.add(pw, 0, 3);

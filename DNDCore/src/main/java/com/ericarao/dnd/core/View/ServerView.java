@@ -3,6 +3,7 @@ package com.ericarao.dnd.core.View;
 import com.ericarao.dnd.core.NetworkServer;
 import com.ericarao.dnd.core.model.ClientUpdate;
 import com.ericarao.dnd.core.model.DMLoginCredentials;
+import com.ericarao.dnd.core.model.NetworkPacket;
 import com.ericarao.dnd.core.model.RegisterPlayer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -41,6 +42,7 @@ public class ServerView {
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private ArrayList<RegisterPlayer> registerPlayerList = new ArrayList<>(numPlayers);
 
+    //Start ServerView
     public void start(Stage serverStage) {
         executorService.submit(() -> networkServer.run());
 
@@ -125,7 +127,7 @@ public class ServerView {
 
     }
 
-    //Gridpanes specifically for damaging a player.
+    //Gridpanes specifically for Modifying a Player.
     private GridPane addPlayerChangeGrid(RegisterPlayer registerPlayer){
 
         GridPane playerGrids = new GridPane();
@@ -192,14 +194,24 @@ public class ServerView {
         TextField damageTextField = new TextField();
         playerGrids.add(damageTextField, 1, 12);
 
+        Label statusLabel = new Label("Status Effect: ");
+        playerGrids.add(statusLabel, 0, 13);
+        TextField statusTextField = new TextField();
+        playerGrids.add(statusTextField, 1, 13);
+
+        Label saveThrowLabel = new Label("Saving Throw: ");
+        playerGrids.add(saveThrowLabel, 0, 14);
+        TextField saveThrowTextField = new TextField();
+        playerGrids.add(saveThrowTextField, 1, 14);
+
         Button btn = new Button("Submit Change");
-        HBox hbBtn = new HBox(13);
+        HBox hbBtn = new HBox(15);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
-        playerGrids.add(hbBtn, 1, 13);
+        playerGrids.add(hbBtn, 1, 15);
 
         final Text actiontarget = new Text();
-        playerGrids.add(actiontarget, 0, 13);
+        playerGrids.add(actiontarget, 0, 16);
         playerGrids.setColumnSpan(actiontarget, 4);
         playerGrids.setHalignment(actiontarget, RIGHT);
         actiontarget.setId("actiontarget");
@@ -207,23 +219,39 @@ public class ServerView {
         btn.setOnAction(e -> {
             actiontarget.setFill(Color.FIREBRICK);
             actiontarget.setText("Change submitted (button clicked).");
+            ClientUpdate updatePlayer = ClientUpdate.builder()
+                    .setDamage(Integer.parseInt(damageTextField.getText()))
+                    .setStatusEffect(statusTextField.getText())
+                    .setSavingThrow(Integer.parseInt(saveThrowTextField.getText()))
+                    .build();
+
+            //Need to write functionality to send object over network
         });
         return playerGrids;
     }
 
+    //Set Credentials for Logging In
     public void setDMLoginCredentialsObject(DMLoginCredentials dmLoginCredentialsObject) {
         this.dmLoginCredentialsObject = dmLoginCredentialsObject;
         numPlayers = this.dmLoginCredentialsObject.numPlayers();
         networkServer = new NetworkServer(2000, numPlayers);
     }
 
-    //Get Current HP of Current Player
+    //Get Current Player Object
     public void getCurrentRegisterPlayerHP(RegisterPlayer registerPlayerObject) {
         this.playerHealth = registerPlayerObject.getPlayerHP();
     }
 
-    private void handleClientUpdate(ClientUpdate clientUpdate) {
-        Platform.runLater(() -> { playerHealth = clientUpdate.getNewHealth(); });
+    //Runlater ClientUpdate
+    private void handleServerUpdate(NetworkPacket networkPacket) {
+        Platform.runLater(() -> handleServerUpdateInternal(networkPacket));
     }
+
+    private void handleServerUpdateInternal(NetworkPacket networkPacket) {
+        // here we can safely update the UI
+    }
+
+    //TODO: Write
+
 
 }
