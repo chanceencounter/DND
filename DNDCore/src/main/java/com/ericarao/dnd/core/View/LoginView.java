@@ -2,7 +2,6 @@ package com.ericarao.dnd.core.View;
 
 import com.ericarao.dnd.core.model.DMLoginCredentials;
 import com.ericarao.dnd.core.model.PlayerLoginCredentials;
-import com.sun.deploy.util.SessionState;
 import javafx.application.Application;
 import static javafx.geometry.HPos.RIGHT;
 import javafx.geometry.Insets;

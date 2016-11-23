@@ -2,46 +2,42 @@ package com.ericarao.dnd.core;
 
 import com.ericarao.dnd.core.model.NetworkPacket;
 import com.ericarao.dnd.core.utils.JsonUtils;
+import com.ericarao.dnd.core.utils.NetworkUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class NetworkClient {
 
     //Variables
     private final String hostName;
     private final int port;
-    private final Consumer<NetworkPacket> networkPacketConsumer;
+    private final Function<NetworkPacket, Optional<NetworkPacket>> networkPacketConsumer;
     private final ConcurrentLinkedQueue<NetworkPacket> threadSafeOutboundMsgQueue = new ConcurrentLinkedQueue<>();
     private volatile boolean shouldStop = false;
 
-
-    public NetworkClient(String hostName, int port, Consumer<NetworkPacket> networkPacketConsumer) {
+    public NetworkClient(String hostName, int port, Function<NetworkPacket, Optional<NetworkPacket>> networkPacketConsumer) {
         this.hostName = hostName;
         this.port = port;
         this.networkPacketConsumer = networkPacketConsumer;
     }
 
-
     public void run() {
         try(Socket clientSocket = new Socket(hostName, port);
-            PrintWriter writeServer = new PrintWriter(clientSocket.getOutputStream(), true);
-            BufferedReader readServer = new BufferedReader(new InputStreamReader(
-                    clientSocket.getInputStream()))) {
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
             while (!shouldStop) {
-                if (clientSocket.getInputStream().available() > 0) {
-                    processServerData(readServer.readLine());
+                if (in.ready()) {
+                    processServerData(in.readLine()).ifPresent(packet -> NetworkUtils.write(out, packet));
                 }
                 NetworkPacket outboundPacket;
                 if ((outboundPacket = threadSafeOutboundMsgQueue.poll()) != null) {
-                    martialPacket(outboundPacket).ifPresent(writeServer::write);
+                    NetworkUtils.write(out, outboundPacket);
                 }
             }
         } catch (IOException e) {
@@ -49,28 +45,21 @@ public class NetworkClient {
         }
     }
 
+    //Remember to shut down your client when exiting!
     public void shutDown() {
         shouldStop = true;
     }
 
+    //
     public void enqueueNetworkPacket(NetworkPacket networkPacket) {
         threadSafeOutboundMsgQueue.add(networkPacket);
     }
 
-    private Optional<String> martialPacket(NetworkPacket networkPacket) {
+    private Optional<NetworkPacket> processServerData(String data) {
         try {
-            return Optional.of(JsonUtils.MAPPER.writeValueAsString(networkPacket));
-        } catch (JsonProcessingException e) {
-            System.out.println("Encountered exception: " + e.getMessage());
-            return Optional.empty();
-        }
-    }
-
-    private void processServerData(String data) {
-        try {
-            networkPacketConsumer.accept(JsonUtils.MAPPER.readValue(data, NetworkPacket.class));
+            return networkPacketConsumer.apply(JsonUtils.MAPPER.readValue(data, NetworkPacket.class));
         } catch (Exception e) {
-            System.out.println("Encounter Exception, reading data from server: " + e);
+            throw new RuntimeException(e);
         }
     }
 }

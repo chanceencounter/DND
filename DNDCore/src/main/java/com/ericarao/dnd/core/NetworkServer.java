@@ -1,23 +1,38 @@
 package com.ericarao.dnd.core;
 
+import com.ericarao.dnd.core.model.NetworkPacket;
+import com.ericarao.dnd.core.model.ServerResponse;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class NetworkServer {
 
     //Variables
     private final int port;
-    private final int playerCount;
+    private final int threads;
+    private final AtomicInteger clientCounter = new AtomicInteger();
+    private final ConcurrentMap<Integer, ClientHandler> clientMap = new ConcurrentHashMap<>();
+    private final BiFunction<Integer, NetworkPacket, Optional<ServerResponse>> packetProcessor;
 
     /**
      * Constructor
      */
-    public NetworkServer(int port, int playerCount) {
+    public NetworkServer(int port,
+                         int threads,
+                         BiFunction<Integer, NetworkPacket, Optional<ServerResponse>> packetProcessor) {
         this.port = port;
-        this.playerCount = playerCount + 1;
+        this.threads = threads;
+        this.packetProcessor = packetProcessor;
     }
 
     public void run() {
@@ -29,10 +44,10 @@ public class NetworkServer {
          */
         ExecutorService executorService = null;
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            executorService = Executors.newFixedThreadPool(playerCount);
+            executorService = Executors.newFixedThreadPool(threads);
             while(true) {
                 Socket client = serverSocket.accept();
-                executorService.execute(new ClientHandler(client));
+                executorService.execute(() -> createHandler(client).run());
             }
         } catch (IOException e) {
             System.out.println("Could not start server. " + e.getMessage());
@@ -42,5 +57,22 @@ public class NetworkServer {
                 executorService.shutdown();
             }
         }
+    }
+
+    private ClientHandler createHandler(Socket socket) {
+        int id = clientCounter.incrementAndGet();
+        ClientHandler clientHandler = new ClientHandler(socket);
+        clientHandler.setPacketProcessor(getClientPacketProcessor(id));
+        clientMap.put(id, clientHandler);
+        return clientHandler;
+    }
+
+    //Function takes an ID and NetworkPacket and returns an [optional] server response.
+    //Higher Order Function TODO: Read about Lambdas and Higher Order Functions
+    private Function<NetworkPacket, Optional<NetworkPacket>> getClientPacketProcessor (int id) {
+        return packet -> packetProcessor.apply(id, packet)
+                .flatMap(resp -> resp.getClientIds().contains(id)
+                    ? Optional.of(resp.getResponse())
+                    : Optional.empty());
     }
 }

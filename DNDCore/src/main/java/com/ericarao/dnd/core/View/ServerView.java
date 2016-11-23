@@ -1,10 +1,7 @@
 package com.ericarao.dnd.core.View;
 
 import com.ericarao.dnd.core.NetworkServer;
-import com.ericarao.dnd.core.model.ClientUpdate;
-import com.ericarao.dnd.core.model.DMLoginCredentials;
-import com.ericarao.dnd.core.model.NetworkPacket;
-import com.ericarao.dnd.core.model.RegisterPlayer;
+import com.ericarao.dnd.core.model.*;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -31,12 +28,24 @@ import static javafx.geometry.HPos.RIGHT;
 
 public class ServerView {
 
-    private int playerHealth;
+    //Variables for Tracking Players
+    private static int numPlayers;
+    private int currentPlayerNum;
+    private RegisterPlayer currentPlayer;
+
+    //Credential Objects
+    private DMLoginCredentials dmLoginCredentialsObject;
+
+    //Login Credentials
+    private String dmIPAddress;
+    private String dmPassword;
+    private String inputIPAddress;
+    private String inputPassword;
+
+    //View Specific
     private final StackPane stack = new StackPane();
     final ComboBox comboBox = new ComboBox();
     final Label label = new Label();
-    private static int numPlayers;
-    private DMLoginCredentials dmLoginCredentialsObject;
     private Scene scene;
     private NetworkServer networkServer;
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -52,13 +61,14 @@ public class ServerView {
             return;
         }
 
+        serverStage.setTitle("DND Tool: Server View");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Text scenetitle = new Text("Welcome!");
+        Text scenetitle = new Text("Welcome our dear Overlord!");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 2, 1);
         try {
@@ -108,23 +118,6 @@ public class ServerView {
 
         scene = new Scene(root, 300, 275);
         serverStage.setScene(scene);
-    }
-
-    //Set visibility
-    public void setVisibility(Pane pane, ComboBox comboBox, Label label) {
-
-        //Set Label
-        label.setText("viewCharacter: " + comboBox.getValue());
-
-        // Make all children invisible
-        for (Node node : pane.getChildren()) {
-            node.setVisible(false);
-        }
-        // make the selected rectangle visible
-        int selectedIndex = comboBox.getSelectionModel()
-                .selectedIndexProperty().getValue();
-        pane.getChildren().get(selectedIndex).setVisible(true);
-
     }
 
     //Gridpanes specifically for Modifying a Player.
@@ -187,7 +180,7 @@ public class ServerView {
         playerGrids.add(initiativeLabel, 0, 11);
         Label initiativeValueLabel = new Label(String.valueOf(registerPlayer.getPlayerInitiative()));
         playerGrids.add(initiativeValueLabel, 1, 11);
-        
+
         //Info Affected/Sent
         Label damageLabel = new Label("Damage: ");
         playerGrids.add(damageLabel, 0, 12);
@@ -230,28 +223,71 @@ public class ServerView {
         return playerGrids;
     }
 
+    //Setters
+    //Set visibility
+    public void setVisibility(Pane pane, ComboBox comboBox, Label label) {
+
+        //Set Label
+        label.setText("viewCharacter: " + comboBox.getValue());
+
+        // Make all children invisible
+        for (Node node : pane.getChildren()) {
+            node.setVisible(false);
+        }
+        // make the selected rectangle visible
+        int selectedIndex = comboBox.getSelectionModel()
+                .selectedIndexProperty().getValue();
+        pane.getChildren().get(selectedIndex).setVisible(true);
+
+    }
+
     //Set Credentials for Logging In
+    //Also method for Setting DM Credentials
     public void setDMLoginCredentialsObject(DMLoginCredentials dmLoginCredentialsObject) {
         this.dmLoginCredentialsObject = dmLoginCredentialsObject;
         numPlayers = this.dmLoginCredentialsObject.numPlayers();
         networkServer = new NetworkServer(2000, numPlayers);
+        this.dmIPAddress = dmLoginCredentialsObject.getIP();
+        this.dmPassword = dmLoginCredentialsObject.roomPassword();
     }
 
-    //Get Current Player Object
-    public void getCurrentRegisterPlayerHP(RegisterPlayer registerPlayerObject) {
-        this.playerHealth = registerPlayerObject.getPlayerHP();
+    //Set Credentials for *Current Player Connecting*
+    public void setPlayerLoginCredentialsObject(PlayerLoginCredentials playerLoginCredentialsObject) {
+
     }
 
-    //Runlater ClientUpdate
+    //Set CurrentPlayer
+    public void setCurrentPlayerObject() {
+        registerPlayerList.set(currentPlayerNum, currentPlayer);
+    }
+
+    //CurrentPlayer Number on List
+    public void getCurrentPlayerNum(int currentPlayerNum) {
+        this.currentPlayerNum = currentPlayerNum;
+    }
+
+    //TODO: Write Method for "Recieve Query for Credentials or ClientUpdate"
+    //Method for Comparing Credentials
+    public boolean compareCredentials(String inputPassword, String dmPassword,
+                                      String inputIPAddress, String dmIPAddress) {
+        return (inputPassword.equals(dmPassword) && inputIPAddress.equals(dmIPAddress));
+    }
+
+    //Method for Determining if you are Dropping the Player
+    public void dropConnection(PlayerLoginCredentials playerCredentialsObject) {
+        if (!compareCredentials(playerCredentialsObject.roomPassword(), dmPassword,
+                playerCredentialsObject.dmIP(), dmIPAddress)) {
+            //Drop connection if player sends wrong credentials.
+        }
+    }
+
+    //Runlater ServerUpdate
     private void handleServerUpdate(NetworkPacket networkPacket) {
         Platform.runLater(() -> handleServerUpdateInternal(networkPacket));
     }
 
     private void handleServerUpdateInternal(NetworkPacket networkPacket) {
         // here we can safely update the UI
+        //TODO: Add all get object stuff here
     }
-
-    //TODO: Write
-
-
 }

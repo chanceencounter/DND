@@ -2,18 +2,21 @@ package com.ericarao.dnd.core.View;
 
 import com.ericarao.dnd.core.NetworkClient;
 import com.ericarao.dnd.core.model.*;
-import javafx.application.Application;
+
 import static javafx.geometry.HPos.RIGHT;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -28,18 +31,20 @@ public class ClientView {
 
     private NetworkClient networkClient = new NetworkClient("127.0.0.1", 8000, this::handleClientUpdate);
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private PlayerLoginCredentials playerLoginCredentials;
+    private PlayerLoginCredentials playerLoginCredentialsObject;
     private DMLoginCredentials dmLoginCredentials;
     private ClientUpdate clientUpdate;
-    private String dmIPAddress;
-    private String dmPassword;
-    private String inputIPAddress;
-    private String inputPassword;
     private Scene scene;
 
     //Start ClientView
     public void start(Stage clientStage) {
         executorService.submit(() -> networkClient.run());
+
+        //If playerLoginCredentialsObject is not given, please fail
+        if (playerLoginCredentialsObject == null) {
+            executorService.shutdown();
+            return;
+        }
 
         clientStage.setTitle("DND Tool: Client View");
         GridPane grid = new GridPane();
@@ -143,45 +148,30 @@ public class ClientView {
         clientStage.show();
     }
 
+    //Setters
+    //Set visibility
+    public void setVisibility(Pane pane, ComboBox comboBox, Label label) {
 
-    //Method for Comparing Credentials
-    public boolean compareCredentials() {
-        return (inputPassword == dmPassword && inputIPAddress == dmIPAddress);
+        //Set Label
+        label.setText("viewCharacter: " + comboBox.getValue());
+
+        // Make all children invisible
+        for (Node node : pane.getChildren()) {
+            node.setVisible(false);
+        }
+        // make the selected rectangle visible
+        int selectedIndex = comboBox.getSelectionModel()
+                .selectedIndexProperty().getValue();
+        pane.getChildren().get(selectedIndex).setVisible(true);
+
     }
 
-    //Method for Setting Player Credentials from Recieved Creds.
-    public void setPlayerCredentialsObject(PlayerLoginCredentials playerCredentialsObject) {
-        this.playerLoginCredentials = playerCredentialsObject;
-        this.inputIPAddress = playerCredentialsObject.dmIP();
-        this.inputPassword = playerCredentialsObject.roomPassword();
-    }
-
-    //Method for Setting ClientUpdate
+    //Method for Setting ClientUpdate (get changes from player)
     public void setClientUpdate(ClientUpdate clientUpdate) {
         this.clientUpdate = clientUpdate;
     }
 
-    //Ping DM for Credentials
-    public void pingDM(Boolean isCredentials, Inet4Address dmInet4Address) {
-        //Socket Programming take Inet4Address to contact DM
-
-        //Ping for Credentials
-        if (isCredentials) {
-            //Recieve DMLoginCredentials
-        }
-        //Ping for Player Update
-        else {
-            //Recieve ClientUpdate
-        }
-    }
-
-    //Method for Setting DM Credentials
-    public void setDMCredentialsObject(DMLoginCredentials dmLoginCredentials) {
-        this.dmLoginCredentials = dmLoginCredentials;
-        this.dmIPAddress = dmLoginCredentials.getIP();
-        this.dmPassword = dmLoginCredentials.roomPassword();
-    }
-
+    //Runlater ClientUpdate
     private void handleClientUpdate(NetworkPacket networkPacket) {
         Platform.runLater(() -> handleClientUpdateInternal(networkPacket));
     }
