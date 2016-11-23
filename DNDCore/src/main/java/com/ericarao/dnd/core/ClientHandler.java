@@ -1,5 +1,7 @@
 package com.ericarao.dnd.core;
 
+import com.ericarao.dnd.core.model.DMLoginCredentials;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -31,6 +33,5 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
             System.out.println("Encountered exception while handling client. " + e.getMessage());
         }
-
     }
 }
