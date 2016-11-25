@@ -16,11 +16,23 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.util.function.Consumer;
+
 public class LoginView {
 
-    private InputValidation inputValidationNum = new InputValidation();
+    private final InputValidation inputValidationNum = new InputValidation();
 
+    private Consumer<DMLoginCredentials> dmLoginCredentialsConsumer;
+    private Consumer<PlayerLoginCredentials> playerLoginCredentialsConsumer;
     private Scene scene;
+
+    public void setDmLoginCallback(Consumer<DMLoginCredentials> dmLoginCallback) {
+        this.dmLoginCredentialsConsumer = dmLoginCallback;
+    }
+
+    public void setPlayerLoginCallback(Consumer<PlayerLoginCredentials> playerLoginCallback) {
+        this.playerLoginCredentialsConsumer = playerLoginCallback;
+    }
 
     public Scene getScene() {
         if (scene == null) {
@@ -222,10 +234,14 @@ public class LoginView {
     }
 
     private void onSignInButtonPressed(DMLoginCredentials dmLoginCredentials) {
-
+        if (dmLoginCredentialsConsumer != null) {
+            dmLoginCredentialsConsumer.accept(dmLoginCredentials);
+        }
     }
 
     private void onSignInButtonPressed(PlayerLoginCredentials playerLoginCredentials) {
-
+        if (playerLoginCredentialsConsumer != null) {
+            playerLoginCredentialsConsumer.accept(playerLoginCredentials);
+        }
     }
 }

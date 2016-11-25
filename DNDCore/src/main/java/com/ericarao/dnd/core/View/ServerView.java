@@ -247,11 +247,6 @@ public class ServerView {
         }
     }
 
-    //Set Credentials for *Current Player Connecting*
-    public void setPlayerLoginCredentialsObject(PlayerLoginCredentials playerLoginCredentialsObject) {
-
-    }
-
     //Set CurrentPlayer
     public void setCurrentPlayerObject() {
         registerPlayerList.set(currentPlayerNum, currentPlayer);

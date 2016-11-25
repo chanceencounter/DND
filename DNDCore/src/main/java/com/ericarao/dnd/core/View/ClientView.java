@@ -29,6 +29,27 @@ public class ClientView {
     private Consumer<RegisterPlayer> registerPlayerConsumer;
     private Scene scene;
 
+    //Setters
+    //Set visibility
+    public void setVisibility(Pane pane, ComboBox comboBox, Label label) {
+
+        //Set Label
+        label.setText("viewCharacter: " + comboBox.getValue());
+
+        // Make all children invisible
+        for (Node node : pane.getChildren()) {
+            node.setVisible(false);
+        }
+        // make the selected rectangle visible
+        int selectedIndex = comboBox.getSelectionModel()
+                .selectedIndexProperty().getValue();
+        pane.getChildren().get(selectedIndex).setVisible(true);
+    }
+
+    public void setRegisterPlayerCallback(Consumer<RegisterPlayer> registerPlayerConsumer) {
+        this.registerPlayerConsumer = registerPlayerConsumer;
+    }
+
     public Scene getScene() {
         if (scene == null) {
             scene = initClientScene();
@@ -37,7 +58,6 @@ public class ClientView {
         return scene;
     }
 
-    //Start ClientView
     private Scene initClientScene() {
 
         GridPane grid = new GridPane();
@@ -140,27 +160,6 @@ public class ClientView {
         });
 
         return new Scene(grid, 500, 500);
-    }
-
-    //Setters
-    //Set visibility
-    public void setVisibility(Pane pane, ComboBox comboBox, Label label) {
-
-        //Set Label
-        label.setText("viewCharacter: " + comboBox.getValue());
-
-        // Make all children invisible
-        for (Node node : pane.getChildren()) {
-            node.setVisible(false);
-        }
-        // make the selected rectangle visible
-        int selectedIndex = comboBox.getSelectionModel()
-                .selectedIndexProperty().getValue();
-        pane.getChildren().get(selectedIndex).setVisible(true);
-    }
-
-    public void setRegisterPlayerCallback(Consumer<RegisterPlayer> registerPlayerConsumer) {
-        this.registerPlayerConsumer = registerPlayerConsumer;
     }
 
     private void submitRegisterPlayer(RegisterPlayer registerPlayer) {
