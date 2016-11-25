@@ -9,6 +9,9 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -19,7 +22,9 @@ public class NetworkClient {
     private final int port;
     private final Function<NetworkPacket, Optional<NetworkPacket>> networkPacketConsumer;
     private final ConcurrentLinkedQueue<NetworkPacket> threadSafeOutboundMsgQueue = new ConcurrentLinkedQueue<>();
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private volatile boolean shouldStop = false;
+
 
     public NetworkClient(String hostName, int port, Function<NetworkPacket, Optional<NetworkPacket>> networkPacketConsumer) {
         this.hostName = hostName;
@@ -28,21 +33,7 @@ public class NetworkClient {
     }
 
     public void run() {
-        try(Socket clientSocket = new Socket(hostName, port);
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
-            while (!shouldStop) {
-                if (in.ready()) {
-                    processServerData(in.readLine()).ifPresent(packet -> NetworkUtils.write(out, packet));
-                }
-                NetworkPacket outboundPacket;
-                if ((outboundPacket = threadSafeOutboundMsgQueue.poll()) != null) {
-                    NetworkUtils.write(out, outboundPacket);
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Encountered exception: " + e.getMessage());
-        }
+        executorService.submit(() -> runInternal());
     }
 
     //Remember to shut down your client when exiting!
@@ -60,6 +51,24 @@ public class NetworkClient {
             return networkPacketConsumer.apply(JsonUtils.MAPPER.readValue(data, NetworkPacket.class));
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void runInternal() {
+        try(Socket clientSocket = new Socket(hostName, port);
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+            while (!shouldStop) {
+                if (in.ready()) {
+                    processServerData(in.readLine()).ifPresent(packet -> NetworkUtils.write(out, packet));
+                }
+                NetworkPacket outboundPacket;
+                if ((outboundPacket = threadSafeOutboundMsgQueue.poll()) != null) {
+                    NetworkUtils.write(out, outboundPacket);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Encountered exception: " + e.getMessage());
         }
     }
 }

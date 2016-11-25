@@ -16,20 +16,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Optional;
 
 import static javafx.geometry.HPos.RIGHT;
 
 public class ServerView {
 
     //Variables for Tracking Players
-    private static int numPlayers;
+    private int numPlayers;
     private int currentPlayerNum;
     private RegisterPlayer currentPlayer;
 
@@ -39,29 +37,23 @@ public class ServerView {
     //Login Credentials
     private String dmIPAddress;
     private String dmPassword;
-    private String inputIPAddress;
-    private String inputPassword;
 
     //View Specific
-    private final StackPane stack = new StackPane();
-    final ComboBox comboBox = new ComboBox();
-    final Label label = new Label();
-    private Scene scene;
-    private NetworkServer networkServer;
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private ArrayList<RegisterPlayer> registerPlayerList = new ArrayList<>(numPlayers);
 
-    //Start ServerView
-    public void start(Stage serverStage) {
-        executorService.submit(() -> networkServer.run());
+    private Scene scene;
 
-        //If dmLoginCredentialsObject is not given, please fail.
-        if (dmLoginCredentialsObject == null) {
-            executorService.shutdown();
-            return;
+    public Scene getScene() {
+        if (scene == null) {
+            scene = initServerScene();
         }
 
-        serverStage.setTitle("DND Tool: Server View");
+        return scene;
+    }
+
+    //Start ServerView
+    private Scene initServerScene() {
+
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -78,6 +70,10 @@ public class ServerView {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+
+        StackPane stack = new StackPane();
+        ComboBox comboBox = new ComboBox();
+        Label label = new Label();
 
         //Add Panes per User
         for (int i = 0; i < numPlayers; i++) {
@@ -116,8 +112,7 @@ public class ServerView {
         StackPane root = new StackPane();
         root.getChildren().add(vBox);
 
-        scene = new Scene(root, 300, 275);
-        serverStage.setScene(scene);
+        return new Scene(root, 500, 500);
     }
 
     //Gridpanes specifically for Modifying a Player.
@@ -217,9 +212,8 @@ public class ServerView {
                     .setStatusEffect(statusTextField.getText())
                     .setSavingThrow(Integer.parseInt(saveThrowTextField.getText()))
                     .build();
-
-            //Need to write functionality to send object over network
         });
+
         return playerGrids;
     }
 
@@ -244,11 +238,13 @@ public class ServerView {
     //Set Credentials for Logging In
     //Also method for Setting DM Credentials
     public void setDMLoginCredentialsObject(DMLoginCredentials dmLoginCredentialsObject) {
-        this.dmLoginCredentialsObject = dmLoginCredentialsObject;
-        numPlayers = this.dmLoginCredentialsObject.numPlayers();
-        networkServer = new NetworkServer(2000, numPlayers);
-        this.dmIPAddress = dmLoginCredentialsObject.getIP();
-        this.dmPassword = dmLoginCredentialsObject.roomPassword();
+        //Prevent user from reconstructing this. Not ok.
+        if (this.dmLoginCredentialsObject == null) {
+            this.dmLoginCredentialsObject = dmLoginCredentialsObject;
+            numPlayers = this.dmLoginCredentialsObject.numPlayers();
+            this.dmIPAddress = dmLoginCredentialsObject.getIP();
+            this.dmPassword = dmLoginCredentialsObject.roomPassword();
+        }
     }
 
     //Set Credentials for *Current Player Connecting*
@@ -279,15 +275,5 @@ public class ServerView {
                 playerCredentialsObject.dmIP(), dmIPAddress)) {
             //Drop connection if player sends wrong credentials.
         }
-    }
-
-    //Runlater ServerUpdate
-    private void handleServerUpdate(NetworkPacket networkPacket) {
-        Platform.runLater(() -> handleServerUpdateInternal(networkPacket));
-    }
-
-    private void handleServerUpdateInternal(NetworkPacket networkPacket) {
-        // here we can safely update the UI
-        //TODO: Add all get object stuff here
     }
 }

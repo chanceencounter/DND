@@ -23,6 +23,8 @@ public class NetworkServer {
     private final AtomicInteger clientCounter = new AtomicInteger();
     private final ConcurrentMap<Integer, ClientHandler> clientMap = new ConcurrentHashMap<>();
     private final BiFunction<Integer, NetworkPacket, Optional<ServerResponse>> packetProcessor;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private volatile boolean shouldStop = false;
 
     /**
      * Constructor
@@ -36,27 +38,11 @@ public class NetworkServer {
     }
 
     public void run() {
+        executorService.submit(() -> runInternal());
+    }
 
-        /**
-         * The executor allows the work of communication with clients
-         * to be handed off to other threads leaving the server available
-         * to accept new connections
-         */
-        ExecutorService executorService = null;
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-            executorService = Executors.newFixedThreadPool(threads);
-            while(true) {
-                Socket client = serverSocket.accept();
-                executorService.execute(() -> createHandler(client).run());
-            }
-        } catch (IOException e) {
-            System.out.println("Could not start server. " + e.getMessage());
-            throw new RuntimeException(e);
-        } finally {
-            if (executorService != null && !executorService.isShutdown()) {
-                executorService.shutdown();
-            }
-        }
+    public void shutdown() {
+        shouldStop = true;
     }
 
     private ClientHandler createHandler(Socket socket) {
@@ -74,5 +60,30 @@ public class NetworkServer {
                 .flatMap(resp -> resp.getClientIds().contains(id)
                     ? Optional.of(resp.getResponse())
                     : Optional.empty());
+    }
+
+    /**
+     * The executor allows the work of communication with clients
+     * to be handed off to other threads leaving the server available
+     * to accept new connections
+     */
+    private void runInternal() {
+        ExecutorService executorService = null;
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            executorService = Executors.newFixedThreadPool(threads);
+            while(!shouldStop) {
+                Socket client = serverSocket.accept();
+                executorService.execute(() -> createHandler(client).run());
+            }
+        } catch (IOException e) {
+            System.out.println("Could not initServerScene server. " + e.getMessage());
+            throw new RuntimeException(e);
+        } finally {
+            if (executorService != null && !executorService.isShutdown()) {
+                executorService.shutdown();
+            }
+            // stop our current clients
+            clientMap.values().forEach(ClientHandler::shutdown);
+        }
     }
 }

@@ -1,11 +1,9 @@
 package com.ericarao.dnd.core.View;
 
-import com.ericarao.dnd.core.NetworkClient;
 import com.ericarao.dnd.core.model.*;
 
 import static javafx.geometry.HPos.RIGHT;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -21,32 +19,27 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-
-import java.net.Inet4Address;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public class ClientView {
+    private static final String SUBMIT_CHANGE_BUTTON = "submit-change";
 
-    private NetworkClient networkClient = new NetworkClient("127.0.0.1", 8000, this::handleClientUpdate);
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private PlayerLoginCredentials playerLoginCredentialsObject;
     private DMLoginCredentials dmLoginCredentials;
-    private ClientUpdate clientUpdate;
+    private Consumer<RegisterPlayer> registerPlayerConsumer;
     private Scene scene;
 
-    //Start ClientView
-    public void start(Stage clientStage) {
-        executorService.submit(() -> networkClient.run());
-
-        //If playerLoginCredentialsObject is not given, please fail
-        if (playerLoginCredentialsObject == null) {
-            executorService.shutdown();
-            return;
+    public Scene getScene() {
+        if (scene == null) {
+            scene = initClientScene();
         }
 
-        clientStage.setTitle("DND Tool: Client View");
+        return scene;
+    }
+
+    //Start ClientView
+    private Scene initClientScene() {
+
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -114,6 +107,7 @@ public class ClientView {
 
 
         Button btn = new Button("Submit Change");
+        btn.setId(SUBMIT_CHANGE_BUTTON);
         HBox hbBtn = new HBox(12);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
@@ -128,7 +122,7 @@ public class ClientView {
         btn.setOnAction(e -> {
             actiontarget.setFill(Color.FIREBRICK);
             actiontarget.setText("Change submitted (button clicked).");
-            RegisterPlayer.builder()
+            RegisterPlayer registerPlayer = RegisterPlayer.builder()
                     .setPlayerName(charNameTextField.getText())
                     .setPlayerClass(charClassTextField.getText())
                     .setPlayerLevel(Integer.parseInt(charLevelTextField.getText()))
@@ -141,11 +135,11 @@ public class ClientView {
                     .setPlayerCha(Integer.parseInt(chaTextField.getText()))
                     .setPlayerInitiative(Integer.parseInt(initiativeTextField.getText()))
                     .build();
+
+            submitRegisterPlayer(registerPlayer);
         });
 
-        Scene scene = new Scene(grid, 500, 500);
-        clientStage.setScene(scene);
-        clientStage.show();
+        return new Scene(grid, 500, 500);
     }
 
     //Setters
@@ -163,23 +157,15 @@ public class ClientView {
         int selectedIndex = comboBox.getSelectionModel()
                 .selectedIndexProperty().getValue();
         pane.getChildren().get(selectedIndex).setVisible(true);
-
     }
 
-    //Method for Setting ClientUpdate (get changes from player)
-    public void setClientUpdate(ClientUpdate clientUpdate) {
-        this.clientUpdate = clientUpdate;
+    public void setRegisterPlayerCallback(Consumer<RegisterPlayer> registerPlayerConsumer) {
+        this.registerPlayerConsumer = registerPlayerConsumer;
     }
 
-    //Runlater ClientUpdate
-    private void handleClientUpdate(NetworkPacket networkPacket) {
-        Platform.runLater(() -> handleClientUpdateInternal(networkPacket));
+    private void submitRegisterPlayer(RegisterPlayer registerPlayer) {
+        if (registerPlayerConsumer != null) {
+            registerPlayerConsumer.accept(registerPlayer);
+        }
     }
-
-    private void handleClientUpdateInternal(NetworkPacket networkPacket) {
-        // here we can safely update the UI
-    }
-
-    //public static void main(String[] args) {launch(args);}
-
 }

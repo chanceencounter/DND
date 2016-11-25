@@ -16,20 +16,27 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class LoginView extends Application {
+public class LoginView {
 
     private InputValidation inputValidationNum = new InputValidation();
 
-    @Override
-    public void start(Stage loginStage) {
+    private Scene scene;
+
+    public Scene getScene() {
+        if (scene == null) {
+            scene = initScene();
+        }
+
+        return scene;
+    }
+
+    private Scene initScene() {
         final ComboBox comboBox = new ComboBox();
         comboBox.getItems().addAll("Dungeon Master", "Player Character");
         final Label label = new Label();
         final StackPane stack = new StackPane();
         Button btnChange = new Button();
         btnChange.setText("Read comboBox");
-
-        loginStage.setTitle("Login");
 
         //Listen on Button Action
         btnChange.setOnAction(event -> setVisibility(stack, comboBox, label));
@@ -41,8 +48,8 @@ public class LoginView extends Application {
                         setVisibility(stack, comboBox, label)
                 );*/
 
-        stack.getChildren().add(dmLoginPane(loginStage));
-        stack.getChildren().add(playerLoginPane(loginStage));
+        stack.getChildren().add(dmLoginPane());
+        stack.getChildren().add(playerLoginPane());
 
         // Placing it after adding rectangle to stack
         // will trigger the changelistener to show default rectangle
@@ -56,12 +63,13 @@ public class LoginView extends Application {
         StackPane root = new StackPane();
         root.getChildren().add(vBox);
 
-        Scene scene = new Scene(root, 300, 400);
+        return new Scene(root, 300, 400);
 
+        /*
         loginStage.setTitle("Login");
         loginStage.setScene(scene);
         loginStage.show();
-
+        */
     }
 
     public void setVisibility(Pane pane, ComboBox comboBox, Label label) {
@@ -80,7 +88,7 @@ public class LoginView extends Application {
 
     }
 
-    private GridPane playerLoginPane(Stage loginStage) {
+    private GridPane playerLoginPane() {
         GridPane playerLoginGridPane = new GridPane();
         playerLoginGridPane.setAlignment(Pos.CENTER);
         playerLoginGridPane.setHgap(10);
@@ -124,8 +132,8 @@ public class LoginView extends Application {
         actiontarget.setId("actiontarget");
 
         Scene scene = new Scene(playerLoginGridPane, 300, 275);
-        loginStage.setScene(scene);
-        loginStage.show();
+        //loginStage.setScene(scene);
+        //loginStage.show();
 
         btn.setOnAction(e -> {
             actiontarget.setFill(Color.FIREBRICK);
@@ -136,18 +144,17 @@ public class LoginView extends Application {
                     .setRoomName(idTextField.getText())
                     .setRoomPassword(pwBox.getText())
                     .build();
-            ClientView newClientView = new ClientView();
-            //newClientView.
 
-
+            onSignInButtonPressed(newPlayer);
+            //loginStage.setTitle("DND Tool: Client View");
+            //loginStage.setScene(newClientView.getScene());
+            //loginStage.show();
         });
-
-
 
         return playerLoginGridPane;
     }
 
-    private GridPane dmLoginPane(Stage loginStage) {
+    private GridPane dmLoginPane() {
         GridPane dmLoginGridPane = new GridPane();
         dmLoginGridPane.setAlignment(Pos.CENTER);
         dmLoginGridPane.setHgap(10);
@@ -198,25 +205,27 @@ public class LoginView extends Application {
                     .setRoomPassword(pwBox.getText())
                     .build();
 
-            ServerView newServerView = new ServerView();
-            newServerView.setDMLoginCredentialsObject(currentDM);
-            newServerView.start(loginStage);
-            loginStage.setTitle("ServerView: DM");
+            onSignInButtonPressed(currentDM);
+            //loginStage.setTitle("DND Tool: Server View");
+            //loginStage.setScene(newServerView.getScene());
 
-           // Scene serverViewScene = newServerView.returnView();
-            //loginStage.setScene(serverViewScene);
         });
 
+        /*
         if (loginStage.getScene() == null) {
             Scene scene = new Scene(dmLoginGridPane, 300, 275);
             loginStage.setScene(scene);
         }
+        */
 
         return dmLoginGridPane;
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    private void onSignInButtonPressed(DMLoginCredentials dmLoginCredentials) {
+
     }
 
+    private void onSignInButtonPressed(PlayerLoginCredentials playerLoginCredentials) {
+
+    }
 }
