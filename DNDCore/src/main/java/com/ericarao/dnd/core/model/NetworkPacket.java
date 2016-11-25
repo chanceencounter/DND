@@ -17,7 +17,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ClientUpdate.class, name = "ClientUpdate"),
-        @JsonSubTypes.Type(value = RegisterPlayer.class, name = "RegisterPlayer")
+        @JsonSubTypes.Type(value = RegisterPlayer.class, name = "RegisterPlayer"),
+        @JsonSubTypes.Type(value = PlayerLogin.class, name = "PlayerLogin"),
+        @JsonSubTypes.Type(value = PlayerLoginResponse.class, name = "PlayerLoginResponse")
 })
 public interface NetworkPacket {
     PacketType getType();

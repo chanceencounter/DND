@@ -24,7 +24,7 @@ public class NetworkServer {
     private final ConcurrentMap<Integer, ClientHandler> clientMap = new ConcurrentHashMap<>();
     private final BiFunction<Integer, NetworkPacket, Optional<ServerResponse>> packetProcessor;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private volatile boolean shouldStop = false;
+    private volatile boolean running = false;
 
     /**
      * Constructor
@@ -38,11 +38,14 @@ public class NetworkServer {
     }
 
     public void run() {
-        executorService.submit(() -> runInternal());
+        if (!running) {
+            running = true;
+            executorService.submit(() -> runInternal());
+        }
     }
 
     public void shutdown() {
-        shouldStop = true;
+        running = false;
     }
 
     private ClientHandler createHandler(Socket socket) {
@@ -71,7 +74,7 @@ public class NetworkServer {
         ExecutorService executorService = null;
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             executorService = Executors.newFixedThreadPool(threads);
-            while(!shouldStop) {
+            while(running) {
                 Socket client = serverSocket.accept();
                 executorService.execute(() -> createHandler(client).run());
             }

@@ -212,7 +212,7 @@ public class LoginView {
             actiontarget.setFill(Color.FIREBRICK);
             actiontarget.setText("Sign in button pressed");
             DMLoginCredentials currentDM = DMLoginCredentials.builder()
-                    .setRoomName(idLabel.getText())
+                    .setRoomName(idTextField.getText())
                     .setNumPlayers(Integer.parseInt(numTextField.getText()))
                     .setRoomPassword(pwBox.getText())
                     .build();

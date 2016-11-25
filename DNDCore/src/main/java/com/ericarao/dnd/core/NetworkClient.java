@@ -23,7 +23,7 @@ public class NetworkClient {
     private final Function<NetworkPacket, Optional<NetworkPacket>> networkPacketConsumer;
     private final ConcurrentLinkedQueue<NetworkPacket> threadSafeOutboundMsgQueue = new ConcurrentLinkedQueue<>();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private volatile boolean shouldStop = false;
+    private volatile boolean running = false;
 
 
     public NetworkClient(String hostName, int port, Function<NetworkPacket, Optional<NetworkPacket>> networkPacketConsumer) {
@@ -33,12 +33,15 @@ public class NetworkClient {
     }
 
     public void run() {
-        executorService.submit(() -> runInternal());
+        if (!running) {
+            running = true;
+            executorService.submit(() -> runInternal());
+        }
     }
 
     //Remember to shut down your client when exiting!
     public void shutDown() {
-        shouldStop = true;
+        running = false;
     }
 
     //
@@ -58,7 +61,7 @@ public class NetworkClient {
         try(Socket clientSocket = new Socket(hostName, port);
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
-            while (!shouldStop) {
+            while (running) {
                 if (in.ready()) {
                     processServerData(in.readLine()).ifPresent(packet -> NetworkUtils.write(out, packet));
                 }
