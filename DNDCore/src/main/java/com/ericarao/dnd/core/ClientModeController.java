@@ -19,6 +19,7 @@ public class ClientModeController {
         PlayerLogin playerLogin = PlayerLogin.builder()
                 .setRoomName(playerLoginCredentials.roomName())
                 .setRoomPassword(playerLoginCredentials.roomPassword())
+                .setPlayerName(playerLoginCredentials.playerName())
                 .build();
 
         networkClient.run();

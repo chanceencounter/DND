@@ -7,6 +7,7 @@ import org.immutables.value.Value;
 public abstract class AbstractPlayerLogin implements NetworkPacket {
     public abstract String getRoomName();
     public abstract String getRoomPassword();
+    public abstract String getPlayerName();
 
     @Override
     public PacketType getType() {
