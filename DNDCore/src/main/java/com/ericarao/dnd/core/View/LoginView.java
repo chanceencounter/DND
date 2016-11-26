@@ -4,6 +4,8 @@ import com.ericarao.dnd.core.model.DMLoginCredentials;
 import com.ericarao.dnd.core.model.PlayerLoginCredentials;
 import javafx.application.Application;
 import static javafx.geometry.HPos.RIGHT;
+
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -47,18 +49,17 @@ public class LoginView {
         comboBox.getItems().addAll("Dungeon Master", "Player Character");
         final Label label = new Label();
         final StackPane stack = new StackPane();
-        Button btnChange = new Button();
-        btnChange.setText("Read comboBox");
-
+        //Button btnChange = new Button();
+        //btnChange.setText("Read comboBox");
         //Listen on Button Action
-        btnChange.setOnAction(event -> setVisibility(stack, comboBox, label));
+        //btnChange.setOnAction(event -> setVisibility(stack, comboBox, label));
 
-        //Listen on combobox
-        /*comboBox.getSelectionModel().selectedIndexProperty()
+        //Listen to ComboBox
+        comboBox.getSelectionModel().selectedIndexProperty()
                 .addListener((ObservableValue<? extends Number> observable,
                               Number oldValue, Number newValue) ->
                         setVisibility(stack, comboBox, label)
-                );*/
+                );
 
         stack.getChildren().add(dmLoginPane());
         stack.getChildren().add(playerLoginPane());
@@ -70,7 +71,7 @@ public class LoginView {
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(5, 5, 5, 5));
         vBox.setSpacing(5);
-        vBox.getChildren().addAll(label, comboBox, btnChange, stack);
+        vBox.getChildren().addAll(label, comboBox, stack);
 
         StackPane root = new StackPane();
         root.getChildren().add(vBox);
