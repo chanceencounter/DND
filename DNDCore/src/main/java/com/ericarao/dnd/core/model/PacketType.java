@@ -4,5 +4,6 @@ public enum PacketType {
     RegisterPlayer,
     ClientUpdate,
     PlayerLogin,
-    PlayerLoginResponse
+    PlayerLoginResponse,
+    UpdatePlayerStats
 }

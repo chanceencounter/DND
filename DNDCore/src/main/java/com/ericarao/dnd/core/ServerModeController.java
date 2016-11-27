@@ -26,7 +26,7 @@ public class ServerModeController {
     private Optional<ServerResponse> handleServerData(int clientId, NetworkPacket networkPacket) {
         switch (networkPacket.getType()) {
             case RegisterPlayer:
-                serverView.addPlayer((RegisterPlayer)networkPacket);
+                serverView.addPlayer(clientId, (RegisterPlayer)networkPacket);
                 break;
             case PlayerLogin:
                 return Optional.of(ServerResponse.builder()

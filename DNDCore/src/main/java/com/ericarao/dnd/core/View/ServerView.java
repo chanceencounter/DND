@@ -1,6 +1,5 @@
 package com.ericarao.dnd.core.View;
 
-import com.ericarao.dnd.core.NetworkServer;
 import com.ericarao.dnd.core.model.*;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -19,9 +18,8 @@ import javafx.scene.text.Text;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static javafx.geometry.HPos.RIGHT;
 
@@ -31,7 +29,6 @@ public class ServerView {
     //Variables for Tracking Players
     private int numPlayers;
     private int currentPlayerNum;
-    private AtomicInteger playerEntryCount = new AtomicInteger();
     private RegisterPlayer currentPlayer;
 
     //Credential Objects
@@ -42,7 +39,7 @@ public class ServerView {
     private String dmPassword;
 
     //View Specific
-    private ArrayList<RegisterPlayer> registerPlayerList = new ArrayList<>(numPlayers);
+    private Map<Integer, RegisterPlayer> playerMapping = new ConcurrentHashMap<>();
     private StackPane stack = new StackPane();
     private ComboBox comboBox = new ComboBox();
     private Label label = new Label();
@@ -57,28 +54,18 @@ public class ServerView {
         return scene;
     }
 
-    public void addPlayer(RegisterPlayer registerPlayer) {
-        int id = playerEntryCount.getAndIncrement();
-        registerPlayerList.add(id, RegisterPlayer.builder()
-                .setPlayerName(registerPlayer.getPlayerName())
-                .setPlayerClass(registerPlayer.getPlayerClass())
-                .setPlayerLevel(registerPlayer.getPlayerLevel())
-                .setPlayerHP(registerPlayer.getPlayerHP())
-                .setPlayerStr(registerPlayer.getPlayerStr())
-                .setPlayerDex(registerPlayer.getPlayerDex())
-                .setPlayerCon(registerPlayer.getPlayerCon())
-                .setPlayerInt(registerPlayer.getPlayerInt())
-                .setPlayerWis(registerPlayer.getPlayerWis())
-                .setPlayerCha(registerPlayer.getPlayerCha())
-                .setPlayerInitiative(registerPlayer.getPlayerInitiative())
-                .build());
+    public void addPlayer(int id, RegisterPlayer registerPlayer) {
 
+        //If Value is not null, exit.
+        if (playerMapping.putIfAbsent(id, registerPlayer) != null) {
+            return;
+        }
         Platform.runLater(() -> {
-            stack.getChildren().add(id, addPlayerChangeGrid(registerPlayerList.get(id)));
+            stack.getChildren().add(id, addPlayerChangeGrid(playerMapping.get(id)));
             //Get Pane Player Name
-            comboBox.getItems().add(id, registerPlayerList.get(id).getPlayerName());
-            comboBox.setValue(String.valueOf(registerPlayerList.get(id).getPlayerName()));
-            label.setText(String.valueOf(registerPlayerList.get(id).getPlayerName()));
+            comboBox.getItems().add(id, playerMapping.get(id).getPlayerName());
+            comboBox.setValue(String.valueOf(playerMapping.get(id).getPlayerName()));
+            label.setText(String.valueOf(playerMapping.get(id).getPlayerName()));
             setVisibility(stack, comboBox, label);
         });
     }
@@ -250,11 +237,6 @@ public class ServerView {
             this.dmIPAddress = dmLoginCredentialsObject.getIP();
             this.dmPassword = dmLoginCredentialsObject.roomPassword();
         }
-    }
-
-    //Set CurrentPlayer
-    public void setCurrentPlayerObject() {
-        registerPlayerList.set(currentPlayerNum, currentPlayer);
     }
 
     //CurrentPlayer Number on List
