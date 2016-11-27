@@ -21,14 +21,17 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static javafx.geometry.HPos.RIGHT;
 
 public class ServerView {
+    private static final String VBOX_ID = "vbox.id";
 
     //Variables for Tracking Players
     private int numPlayers;
     private int currentPlayerNum;
+    private AtomicInteger playerEntryCount = new AtomicInteger();
     private RegisterPlayer currentPlayer;
 
     //Credential Objects
@@ -40,6 +43,9 @@ public class ServerView {
 
     //View Specific
     private ArrayList<RegisterPlayer> registerPlayerList = new ArrayList<>(numPlayers);
+    private StackPane stack = new StackPane();
+    private ComboBox comboBox = new ComboBox();
+    private Label label = new Label();
 
     private Scene scene;
 
@@ -51,9 +57,34 @@ public class ServerView {
         return scene;
     }
 
+    public void addPlayer(RegisterPlayer registerPlayer) {
+        int id = playerEntryCount.getAndIncrement();
+        registerPlayerList.add(id, RegisterPlayer.builder()
+                .setPlayerName(registerPlayer.getPlayerName())
+                .setPlayerClass(registerPlayer.getPlayerClass())
+                .setPlayerLevel(registerPlayer.getPlayerLevel())
+                .setPlayerHP(registerPlayer.getPlayerHP())
+                .setPlayerStr(registerPlayer.getPlayerStr())
+                .setPlayerDex(registerPlayer.getPlayerDex())
+                .setPlayerCon(registerPlayer.getPlayerCon())
+                .setPlayerInt(registerPlayer.getPlayerInt())
+                .setPlayerWis(registerPlayer.getPlayerWis())
+                .setPlayerCha(registerPlayer.getPlayerCha())
+                .setPlayerInitiative(registerPlayer.getPlayerInitiative())
+                .build());
+
+        Platform.runLater(() -> {
+            stack.getChildren().add(id, addPlayerChangeGrid(registerPlayerList.get(id)));
+            //Get Pane Player Name
+            comboBox.getItems().add(id, registerPlayerList.get(id).getPlayerName());
+            comboBox.setValue(String.valueOf(registerPlayerList.get(id).getPlayerName()));
+            label.setText(String.valueOf(registerPlayerList.get(id).getPlayerName()));
+            setVisibility(stack, comboBox, label);
+        });
+    }
+
     //Start ServerView
     private Scene initServerScene() {
-
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -71,32 +102,6 @@ public class ServerView {
             e.printStackTrace();
         }
 
-        StackPane stack = new StackPane();
-        ComboBox comboBox = new ComboBox();
-        Label label = new Label();
-
-        //Add Panes per User
-        for (int i = 0; i < numPlayers; i++) {
-                registerPlayerList.add(i, RegisterPlayer.builder()
-                        .setPlayerName("Player " + (i + 1))
-                        .setPlayerClass("")
-                        .setPlayerLevel(0)
-                        .setPlayerHP(0)
-                        .setPlayerStr(0)
-                        .setPlayerDex(0)
-                        .setPlayerCon(0)
-                        .setPlayerInt(0)
-                        .setPlayerWis(0)
-                        .setPlayerCha(0)
-                        .setPlayerInitiative(0)
-                        .build());
-            stack.getChildren().add(i, addPlayerChangeGrid(registerPlayerList.get(i)));
-            //Get Pane Player Name
-            comboBox.getItems().add(i, registerPlayerList.get(i).getPlayerName());
-            comboBox.setValue(String.valueOf(registerPlayerList.get(i).getPlayerName()));
-            label.setText(String.valueOf(registerPlayerList.get(i).getPlayerName()));
-            setVisibility(stack, comboBox, label);
-        }
         grid.add(comboBox, 0, 2);
 
         Button btnChange = new Button();

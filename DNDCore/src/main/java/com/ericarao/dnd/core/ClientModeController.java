@@ -4,10 +4,13 @@ import com.ericarao.dnd.core.View.ClientView;
 import com.ericarao.dnd.core.model.*;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class ClientModeController {
     private final NetworkClient networkClient;
     private final ClientView clientView;
+
+    private Consumer<PlayerLoginResponse> loginResponseConsumer;
 
     public ClientModeController(ClientView clientView, String hostName, int port) {
         this.clientView = clientView;
@@ -15,7 +18,8 @@ public class ClientModeController {
         clientView.setRegisterPlayerCallback(this::handleRegisterPlayer);
     }
 
-    public void login(PlayerLoginCredentials playerLoginCredentials) {
+    public void login(PlayerLoginCredentials playerLoginCredentials, Consumer<PlayerLoginResponse> loginResponseConsumer) {
+        this.loginResponseConsumer = loginResponseConsumer;
         PlayerLogin playerLogin = PlayerLogin.builder()
                 .setRoomName(playerLoginCredentials.roomName())
                 .setRoomPassword(playerLoginCredentials.roomPassword())
@@ -29,12 +33,7 @@ public class ClientModeController {
     private Optional<NetworkPacket> handleClientData(NetworkPacket networkPacket) {
         switch (networkPacket.getType()) {
             case PlayerLoginResponse:
-                PlayerLoginResponse response = (PlayerLoginResponse)networkPacket;
-                if (response.getSuccess()) {
-                    System.out.print("Login successful!");
-                } else {
-                    System.out.println("Login not successful :(");
-                }
+                loginResponseConsumer.accept((PlayerLoginResponse) networkPacket);
                 break;
 
             // should never be sent to the client

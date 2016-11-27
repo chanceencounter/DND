@@ -10,6 +10,15 @@ import javafx.scene.text.Text;
 
 public class LoginStatusView {
 
+    private Scene scene;
+
+    public Scene getScene() {
+        if (scene == null) {
+            scene = initScene();
+        }
+        return scene;
+    }
+
     private Scene initScene() {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);

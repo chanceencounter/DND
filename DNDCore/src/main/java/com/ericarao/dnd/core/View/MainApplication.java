@@ -4,13 +4,16 @@ import com.ericarao.dnd.core.ClientModeController;
 import com.ericarao.dnd.core.ServerModeController;
 import com.ericarao.dnd.core.model.DMLoginCredentials;
 import com.ericarao.dnd.core.model.PlayerLoginCredentials;
+import com.ericarao.dnd.core.model.PlayerLoginResponse;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 public class MainApplication extends Application {
     private static final int PORT = 8000;
 
     private Stage primaryStage;
+    private ClientView clientView;
     private ClientModeController clientModeController;
     private ServerModeController serverModeController;
 
@@ -38,9 +41,21 @@ public class MainApplication extends Application {
     }
 
     private void handlePlayerLogin(PlayerLoginCredentials playerLoginCredentials) {
-        ClientView clientView = new ClientView();
+        clientView = new ClientView();
         clientModeController = new ClientModeController(clientView, playerLoginCredentials.dmIP(), PORT);
-        clientModeController.login(playerLoginCredentials);
-        primaryStage.setScene(clientView.getScene());
+        clientModeController.login(playerLoginCredentials, this::handleLoginComplete);
+        primaryStage.setScene(new LoginStatusView().getScene());
+    }
+
+    private void handleLoginComplete(PlayerLoginResponse playerLoginResponse) {
+        if (playerLoginResponse.getSuccess()) {
+            Platform.runLater(() -> {
+                primaryStage.setScene(clientView.getScene());
+                primaryStage.show();
+            });
+
+        } else {
+            //handle failure by returning to login
+        }
     }
 }
