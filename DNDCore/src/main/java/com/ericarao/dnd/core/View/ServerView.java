@@ -227,23 +227,6 @@ public class ServerView {
 
     }
 
-    //Set Credentials for Logging In
-    //Also method for Setting DM Credentials
-    public void setDMLoginCredentialsObject(DMLoginCredentials dmLoginCredentialsObject) {
-        //Prevent user from reconstructing this. Not ok.
-        if (this.dmLoginCredentialsObject == null) {
-            this.dmLoginCredentialsObject = dmLoginCredentialsObject;
-            numPlayers = this.dmLoginCredentialsObject.numPlayers();
-            this.dmIPAddress = dmLoginCredentialsObject.getIP();
-            this.dmPassword = dmLoginCredentialsObject.roomPassword();
-        }
-    }
-
-    //CurrentPlayer Number on List
-    public void getCurrentPlayerNum(int currentPlayerNum) {
-        this.currentPlayerNum = currentPlayerNum;
-    }
-
     //TODO: Write Method for "Recieve Query for Credentials or ClientUpdate"
     //Method for Comparing Credentials
     public boolean compareCredentials(String inputPassword, String dmPassword,
@@ -251,11 +234,8 @@ public class ServerView {
         return (inputPassword.equals(dmPassword) && inputIPAddress.equals(dmIPAddress));
     }
 
-    //Method for Determining if you are Dropping the Player
-    public void dropConnection(PlayerLoginCredentials playerCredentialsObject) {
-        if (!compareCredentials(playerCredentialsObject.roomPassword(), dmPassword,
-                playerCredentialsObject.dmIP(), dmIPAddress)) {
-            //Drop connection if player sends wrong credentials.
-        }
+    //Method for Updating Player
+    public void updatePlayer(int id, UpdatePlayerStats updatePlayerStats) {
+
     }
 }
