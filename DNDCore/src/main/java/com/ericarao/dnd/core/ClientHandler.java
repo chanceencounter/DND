@@ -1,6 +1,5 @@
 package com.ericarao.dnd.core;
 
-import com.ericarao.dnd.core.model.DMLoginCredentials;
 import com.ericarao.dnd.core.model.NetworkPacket;
 import com.ericarao.dnd.core.utils.JsonUtils;
 import com.ericarao.dnd.core.utils.NetworkUtils;

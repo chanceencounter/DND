@@ -7,9 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
@@ -78,11 +76,17 @@ public class ServerView {
         ComboBox<PlayerComboBoxItem> comboBox = new ComboBox<>();
         comboBox.setItems(comboBoxItems);
         grid.add(comboBox, 0, 2);
-        comboBox.getSelectionModel().selectedIndexProperty()
-                .addListener((ObservableValue<? extends Number> observable,
-                              Number oldValue, Number newValue) ->
-                        setVisibility(stack, comboBox, label)
-                );
+        comboBox.getSelectionModel().selectedItemProperty()
+                .addListener(
+                        (ObservableValue<? extends PlayerComboBoxItem> observable,
+                         PlayerComboBoxItem oldValue, PlayerComboBoxItem newValue) -> {
+                            if (oldValue != null) {
+                                playerMapping.get(oldValue.getId()).setVisible(false);
+                            }
+                            if (newValue != null) {
+                                playerMapping.get(newValue.getId()).setVisible(true);
+                            }
+                        });
 
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(5, 5, 5, 5));
@@ -95,23 +99,6 @@ public class ServerView {
     }
 
     //Setters
-    //Set visibility
-    public void setVisibility(Pane pane, ComboBox comboBox, Label label) {
-
-        //Set Label
-        label.setText("viewCharacter: " + comboBox.getValue());
-
-        // Make all children invisible
-        for (Node node : pane.getChildren()) {
-            node.setVisible(false);
-        }
-        // make the selected rectangle visible
-        int selectedIndex = comboBox.getSelectionModel()
-                .selectedIndexProperty().getValue();
-        pane.getChildren().get(selectedIndex).setVisible(true);
-
-    }
-
     //TODO: Write Method for "Recieve Query for Credentials or ClientUpdate"
     //Method for Comparing Credentials
     public boolean compareCredentials(String inputPassword, String dmPassword,

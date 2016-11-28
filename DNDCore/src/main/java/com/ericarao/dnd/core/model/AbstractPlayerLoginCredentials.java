@@ -1,7 +1,6 @@
 package com.ericarao.dnd.core.model;
 
 import org.immutables.value.Value;
-import java.net.Inet4Address;
 
 @DndStyle
 @Value.Immutable
