@@ -7,15 +7,12 @@ import static javafx.geometry.HPos.RIGHT;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -30,7 +27,9 @@ public class ClientView {
     private Label hpDamageUpdateLabel;
     private Label statusEffectsUpdateLabel;
     private Label saveRollUpdateLabel;
+    private String totalHP;
     private TextField hpTextField;
+
 
     public Scene getScene() {
         if (scene == null) {
@@ -47,7 +46,8 @@ public class ClientView {
 
     public void updateClientFromDM(ClientUpdate clientUpdate) {
         Platform.runLater(() -> {
-            hpDamageUpdateLabel.setText(String.valueOf(Integer.parseInt(hpTextField.getText()) - clientUpdate.getDamage()));
+            totalHP = (String.valueOf("/ " + clientUpdate.getCurrentHP()));
+            hpDamageUpdateLabel.setText(String.valueOf(Integer.parseInt(hpTextField.getText()) - clientUpdate.getDamage()) + totalHP);
             statusEffectsUpdateLabel.setText(String.valueOf(clientUpdate.getStatusEffect()));
             saveRollUpdateLabel.setText(String.valueOf(clientUpdate.getSavingThrow()));
         });
@@ -125,8 +125,6 @@ public class ClientView {
         grid.add(hpDamageLabel, 0, 12);
         hpDamageUpdateLabel = new Label();
         grid.add(hpDamageUpdateLabel, 1, 12);
-        Label totalHP = new Label("/ " + hpTextField.getText());
-        grid.add(totalHP, 2, 12);
 
         Label statusEffectsLabel = new Label("Status Effects:");
         grid.add(statusEffectsLabel, 0, 13);

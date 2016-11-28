@@ -140,6 +140,7 @@ public class PlayerGridPane extends GridPane {
                     .setDamage(Integer.parseInt(damageTextField.getText()))
                     .setStatusEffect(statusTextField.getText())
                     .setSavingThrow(savingThrow)
+                    .setCurrentHP(Integer.parseInt(hpValueLabel.getText()))
                     .build();
             clientUpdateConsumer.accept(updatePlayer);
         });
