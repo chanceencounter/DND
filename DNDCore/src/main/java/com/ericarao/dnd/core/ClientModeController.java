@@ -7,9 +7,11 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ClientModeController {
+    //Data Fields
     private final NetworkClient networkClient;
     private final ClientView clientView;
 
+    private boolean registered = false;
     private Consumer<PlayerLoginResponse> loginResponseConsumer;
 
     public ClientModeController(ClientView clientView, String hostName, int port) {
@@ -35,7 +37,12 @@ public class ClientModeController {
             case PlayerLoginResponse:
                 loginResponseConsumer.accept((PlayerLoginResponse) networkPacket);
                 break;
-
+            case RegisterPlayerResponse:
+                RegisterPlayerResponse response = (RegisterPlayerResponse) networkPacket;
+                if (response.getSuccess()) {
+                    registered = true;
+                }
+                break;
             // should never be sent to the client
             case RegisterPlayer:
             case PlayerLogin:
@@ -47,6 +54,18 @@ public class ClientModeController {
     }
 
     private void handleRegisterPlayer(RegisterPlayer registerPlayer) {
+        if (registered) {
+            PlayerUpdateStatsDM.builder()
+                    .setPlayerHP(registerPlayer.getPlayerHP())
+                    .setPlayerStr(registerPlayer.getPlayerStr())
+                    .setPlayerDex(registerPlayer.getPlayerDex())
+                    .setPlayerCon(registerPlayer.getPlayerCon())
+                    .setPlayerInt(registerPlayer.getPlayerInt())
+                    .setPlayerWis(registerPlayer.getPlayerWis())
+                    .setPlayerCha(registerPlayer.getPlayerCha())
+                    .setPlayerInitiative(registerPlayer.getPlayerInitiative())
+                    .build();
+        }
         networkClient.enqueueNetworkPacket(registerPlayer);
     }
 }

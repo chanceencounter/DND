@@ -4,7 +4,7 @@ import org.immutables.value.Value;
 
 @DndStyle
 @Value.Immutable
-public abstract class AbstractUpdatePlayerStats implements NetworkPacket {
+public abstract class AbstractPlayerUpdateStatsDM implements NetworkPacket {
     public abstract int getPlayerLevel();
     public abstract int getPlayerHP();
     public abstract int getPlayerStr();
@@ -14,14 +14,10 @@ public abstract class AbstractUpdatePlayerStats implements NetworkPacket {
     public abstract int getPlayerWis();
     public abstract int getPlayerCha();
     public abstract int getPlayerInitiative();
-    public abstract int getDamageHP();
-    public abstract String getStatusEffect();
-    public abstract int getSavingThrow();
-
 
     @Override
     @Value.Derived
     public PacketType getType() {
-        return PacketType.UpdatePlayerStats;
+        return PacketType.PlayerUpdateStatsDM;
     }
 }

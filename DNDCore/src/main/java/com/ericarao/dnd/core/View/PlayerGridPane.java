@@ -1,8 +1,8 @@
 package com.ericarao.dnd.core.View;
 
 import com.ericarao.dnd.core.model.ClientUpdate;
+import com.ericarao.dnd.core.model.PlayerUpdateStatsDM;
 import com.ericarao.dnd.core.model.RegisterPlayer;
-import com.ericarao.dnd.core.model.UpdatePlayerStats;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -130,7 +130,7 @@ public class PlayerGridPane extends GridPane {
         this.setVisible(false);
     }
 
-    public void update(UpdatePlayerStats updatePlayerStats) {
+    public void update(PlayerUpdateStatsDM updatePlayerStats) {
 
         charLevelValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerLevel()));
         hpValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerHP()));

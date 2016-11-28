@@ -107,7 +107,7 @@ public class ServerView {
     }
 
     //Method for Updating Player
-    public void updatePlayer(int id, UpdatePlayerStats updatePlayerStats) {
+    public void updatePlayer(int id, PlayerUpdateStatsDM updatePlayerStats) {
 
     }
 }

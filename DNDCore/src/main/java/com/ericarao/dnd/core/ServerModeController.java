@@ -27,7 +27,10 @@ public class ServerModeController {
         switch (networkPacket.getType()) {
             case RegisterPlayer:
                 serverView.addPlayer(clientId, (RegisterPlayer)networkPacket);
-                break;
+                return Optional.of(ServerResponse.builder()
+                        .addClientIds(clientId)
+                        .setResponse(RegisterPlayerResponse.builder().setSuccess(true).build())
+                        .build());
             case PlayerLogin:
                 return Optional.of(ServerResponse.builder()
                         .addClientIds(clientId)
@@ -39,8 +42,6 @@ public class ServerModeController {
             default:
                 throw new IllegalArgumentException(String.format("Unknown network packet: %s from client: %d", networkPacket.getType(), clientId));
         }
-
-        return Optional.empty();
     }
 
     private PlayerLoginResponse handlePlayerLogin(PlayerLogin playerLogin) {
