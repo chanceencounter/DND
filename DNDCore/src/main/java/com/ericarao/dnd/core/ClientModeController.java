@@ -38,6 +38,7 @@ public class ClientModeController {
                 loginResponseConsumer.accept((PlayerLoginResponse) networkPacket);
                 break;
             case ClientUpdate:
+                clientView.updateClientFromDM((ClientUpdate)networkPacket);
                 break;
             case RegisterPlayerResponse:
                 RegisterPlayerResponse response = (RegisterPlayerResponse) networkPacket;
