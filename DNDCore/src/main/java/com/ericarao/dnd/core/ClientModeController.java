@@ -56,6 +56,7 @@ public class ClientModeController {
     private void handleRegisterPlayer(RegisterPlayer registerPlayer) {
         if (registered) {
             PlayerUpdateStatsDM update = PlayerUpdateStatsDM.builder()
+                    .setPlayerLevel(registerPlayer.getPlayerLevel())
                     .setPlayerHP(registerPlayer.getPlayerHP())
                     .setPlayerStr(registerPlayer.getPlayerStr())
                     .setPlayerDex(registerPlayer.getPlayerDex())
