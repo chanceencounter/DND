@@ -36,12 +36,17 @@ public class ServerModeController {
                         .addClientIds(clientId)
                         .setResponse(handlePlayerLogin((PlayerLogin)networkPacket))
                         .build());
-
+            case PlayerUpdateStatsDM:
+                serverView.updatePlayer(clientId, (PlayerUpdateStatsDM)networkPacket);
+                break;
             // these should never be sent to the server
             case PlayerLoginResponse:
+            case RegisterPlayerResponse:
             default:
                 throw new IllegalArgumentException(String.format("Unknown network packet: %s from client: %d", networkPacket.getType(), clientId));
         }
+
+        return Optional.empty();
     }
 
     private PlayerLoginResponse handlePlayerLogin(PlayerLogin playerLogin) {
