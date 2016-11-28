@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServerView {
 
     //View Specific
-    private final Map<Integer, RegisterPlayer> playerMapping = new ConcurrentHashMap<>();
+    private final Map<Integer, PlayerGridPane> playerMapping = new ConcurrentHashMap<>();
     private final StackPane stack = new StackPane();
     private final Label label = new Label();
     private final ObservableList<PlayerComboBoxItem> comboBoxItems = FXCollections.observableArrayList();
@@ -41,15 +41,16 @@ public class ServerView {
 
     public void addPlayer(int id, RegisterPlayer registerPlayer) {
 
+        PlayerGridPane newPlayerGridPane = new PlayerGridPane(registerPlayer);
         //If Value is not null, exit.
-        if (playerMapping.putIfAbsent(id, registerPlayer) != null) {
+        if (playerMapping.putIfAbsent(id, newPlayerGridPane) != null) {
             return;
         }
         Platform.runLater(() -> {
-            stack.getChildren().add(id, new PlayerGridPane(playerMapping.get(id)));
+            stack.getChildren().add(newPlayerGridPane));
             //Get Pane Player Name
             comboBoxItems.add(new PlayerComboBoxItem(id, registerPlayer.getPlayerName()));
-            label.setText(String.valueOf(playerMapping.get(id).getPlayerName()));
+            label.setText(String.valueOf(registerPlayer.getPlayerName()));
             //setVisibility(stack, comboBox, label);
         });
     }
