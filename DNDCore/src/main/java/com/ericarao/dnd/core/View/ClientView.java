@@ -134,7 +134,7 @@ public class ClientView {
         grid.add(hbBtn, 1, 13);
 
         final Text actiontarget = new Text();
-        grid.add(actiontarget, 0, 13);
+        grid.add(actiontarget, 0, 14);
         grid.setColumnSpan(actiontarget, 10);
         grid.setHalignment(actiontarget, RIGHT);
         actiontarget.setId("actiontarget");
@@ -159,7 +159,7 @@ public class ClientView {
             submitRegisterPlayer(registerPlayer);
         });
 
-        return new Scene(grid, 500, 500);
+        return new Scene(grid, 500, 550);
     }
 
     private void submitRegisterPlayer(RegisterPlayer registerPlayer) {
