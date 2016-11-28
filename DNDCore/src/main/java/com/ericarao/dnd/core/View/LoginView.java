@@ -49,10 +49,6 @@ public class LoginView {
         comboBox.getItems().addAll("Dungeon Master", "Player Character");
         final Label label = new Label();
         final StackPane stack = new StackPane();
-        //Button btnChange = new Button();
-        //btnChange.setText("Read comboBox");
-        //Listen on Button Action
-        //btnChange.setOnAction(event -> setVisibility(stack, comboBox, label));
 
         //Listen to ComboBox
         comboBox.getSelectionModel().selectedIndexProperty()

@@ -127,6 +127,7 @@ public class PlayerGridPane extends GridPane {
                     .setSavingThrow(Integer.parseInt(saveThrowTextField.getText()))
                     .build();
         });
+        this.setVisible(false);
     }
 
     public void update(UpdatePlayerStats updatePlayerStats) {

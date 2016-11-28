@@ -2,6 +2,7 @@ package com.ericarao.dnd.core.View;
 
 import com.ericarao.dnd.core.model.*;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -77,17 +78,16 @@ public class ServerView {
         ComboBox<PlayerComboBoxItem> comboBox = new ComboBox<>();
         comboBox.setItems(comboBoxItems);
         grid.add(comboBox, 0, 2);
-
-        Button btnChange = new Button();
-        btnChange.setText("Read comboBox");
-        grid.add(btnChange, 1, 2);
-        grid.add(label, 2, 2);
-        btnChange.setOnAction(event -> setVisibility(stack, comboBox, label));
+        comboBox.getSelectionModel().selectedIndexProperty()
+                .addListener((ObservableValue<? extends Number> observable,
+                              Number oldValue, Number newValue) ->
+                        setVisibility(stack, comboBox, label)
+                );
 
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(5, 5, 5, 5));
         vBox.setSpacing(5);
-        vBox.getChildren().addAll(grid, comboBox, btnChange, stack);
+        vBox.getChildren().addAll(grid, comboBox, stack);
         StackPane root = new StackPane();
         root.getChildren().add(vBox);
 
