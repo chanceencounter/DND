@@ -141,11 +141,6 @@ public class PlayerGridPane extends GridPane {
         wisValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerWis()));
         chaValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerCha()));
         initiativeValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerInitiative()));
-
-        //Remember to add these to the client view
-        damageTextField.setText(String.valueOf(updatePlayerStats.getDamageHP()));
-        statusTextField.setText(String.valueOf(updatePlayerStats.getStatusEffect()));
-        saveThrowTextField.setText(String.valueOf(updatePlayerStats.getSavingThrow()));
     }
     
 }
