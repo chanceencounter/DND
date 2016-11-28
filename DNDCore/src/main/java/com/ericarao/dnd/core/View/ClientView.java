@@ -141,13 +141,13 @@ public class ClientView {
 
         Button btn = new Button("Submit Change");
         btn.setId(SUBMIT_CHANGE_BUTTON);
-        HBox hbBtn = new HBox(12);
+        HBox hbBtn = new HBox(15);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
-        grid.add(hbBtn, 1, 13);
+        grid.add(hbBtn, 1, 16);
 
         final Text actiontarget = new Text();
-        grid.add(actiontarget, 0, 14);
+        grid.add(actiontarget, 0, 17);
         grid.setColumnSpan(actiontarget, 10);
         grid.setHalignment(actiontarget, RIGHT);
         actiontarget.setId("actiontarget");
