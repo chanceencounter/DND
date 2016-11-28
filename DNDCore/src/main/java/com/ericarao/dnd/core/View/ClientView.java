@@ -166,7 +166,7 @@ public class ClientView {
                     .setPlayerInt(Integer.parseInt(intTextField.getText()))
                     .setPlayerWis(Integer.parseInt(wisTextField.getText()))
                     .setPlayerCha(Integer.parseInt(chaTextField.getText()))
-                    .setPlayerInitiative(Integer.parseInt(statusEffectsUpdateLabel.getText()))
+                    .setPlayerInitiative(Integer.parseInt(initiativeTextField.getText()))
                     .build();
 
             submitRegisterPlayer(registerPlayer);
