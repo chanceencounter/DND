@@ -55,7 +55,7 @@ public class ClientModeController {
 
     private void handleRegisterPlayer(RegisterPlayer registerPlayer) {
         if (registered) {
-            PlayerUpdateStatsDM.builder()
+            PlayerUpdateStatsDM update = PlayerUpdateStatsDM.builder()
                     .setPlayerHP(registerPlayer.getPlayerHP())
                     .setPlayerStr(registerPlayer.getPlayerStr())
                     .setPlayerDex(registerPlayer.getPlayerDex())
@@ -65,7 +65,10 @@ public class ClientModeController {
                     .setPlayerCha(registerPlayer.getPlayerCha())
                     .setPlayerInitiative(registerPlayer.getPlayerInitiative())
                     .build();
+            networkClient.enqueueNetworkPacket(update);
+        } else {
+            networkClient.enqueueNetworkPacket(registerPlayer);
         }
-        networkClient.enqueueNetworkPacket(registerPlayer);
+
     }
 }
