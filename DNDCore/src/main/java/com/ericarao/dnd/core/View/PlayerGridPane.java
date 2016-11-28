@@ -3,6 +3,7 @@ package com.ericarao.dnd.core.View;
 import com.ericarao.dnd.core.model.ClientUpdate;
 import com.ericarao.dnd.core.model.PlayerUpdateStatsDM;
 import com.ericarao.dnd.core.model.RegisterPlayer;
+import com.google.common.base.Strings;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -128,13 +129,17 @@ public class PlayerGridPane extends GridPane {
         btn.setOnAction(e -> {
             actiontarget.setFill(Color.FIREBRICK);
             actiontarget.setText("Change submitted (button clicked).");
-            if (saveThrowTextField.getText() == null) {
-                saveThrowTextField.setText("0");
+            int savingThrow;
+            if (Strings.isNullOrEmpty(saveThrowTextField.getText())) {
+                savingThrow = 0;
+            } else {
+                savingThrow = Integer.parseInt(saveThrowTextField.getText());
             }
+
             ClientUpdate updatePlayer = ClientUpdate.builder()
                     .setDamage(Integer.parseInt(damageTextField.getText()))
                     .setStatusEffect(statusTextField.getText())
-                    .setSavingThrow(Integer.parseInt(saveThrowTextField.getText()))
+                    .setSavingThrow(savingThrow)
                     .build();
             clientUpdateConsumer.accept(updatePlayer);
         });
