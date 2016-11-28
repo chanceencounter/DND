@@ -26,7 +26,8 @@ public class ServerModeController {
     private Optional<ServerResponse> handleServerData(int clientId, NetworkPacket networkPacket) {
         switch (networkPacket.getType()) {
             case RegisterPlayer:
-                serverView.addPlayer(clientId, (RegisterPlayer)networkPacket);
+                serverView.addPlayer(clientId, (RegisterPlayer)networkPacket,
+                        clientUpdate -> processClientUpdate(clientId, clientUpdate));
                 return Optional.of(ServerResponse.builder()
                         .addClientIds(clientId)
                         .setResponse(RegisterPlayerResponse.builder().setSuccess(true).build())
@@ -47,6 +48,13 @@ public class ServerModeController {
         }
 
         return Optional.empty();
+    }
+
+    private void processClientUpdate(int id, ClientUpdate clientUpdate) {
+        networkServer.enqueueMsg(ServerResponse.builder()
+                .addClientIds(id)
+                .setResponse(clientUpdate)
+                .build());
     }
 
     private PlayerLoginResponse handlePlayerLogin(PlayerLogin playerLogin) {

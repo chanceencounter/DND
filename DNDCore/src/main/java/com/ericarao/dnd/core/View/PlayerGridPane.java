@@ -3,6 +3,7 @@ package com.ericarao.dnd.core.View;
 import com.ericarao.dnd.core.model.ClientUpdate;
 import com.ericarao.dnd.core.model.PlayerUpdateStatsDM;
 import com.ericarao.dnd.core.model.RegisterPlayer;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,13 +13,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+import java.util.function.Consumer;
+
 import static javafx.geometry.HPos.RIGHT;
 
 public class PlayerGridPane extends GridPane {
 
+    private final Consumer<ClientUpdate> clientUpdateConsumer;
+
     private Label charNameValueLabel;
-    private  Label charClassValueLabel;
-    private  Label charLevelValueLabel;
+    private Label charClassValueLabel;
+    private Label charLevelValueLabel;
     private Label hpValueLabel;
     private Label strValueLabel;
     private Label dexValueLabel;
@@ -28,10 +33,12 @@ public class PlayerGridPane extends GridPane {
     private Label chaValueLabel;
     private Label initiativeValueLabel;
     private TextField damageTextField;
-    private  TextField statusTextField;
+    private TextField statusTextField;
     private TextField saveThrowTextField;
 
-    public PlayerGridPane(RegisterPlayer registerPlayer) {
+    public PlayerGridPane(RegisterPlayer registerPlayer, Consumer<ClientUpdate> clientUpdateConsumer) {
+
+        this.clientUpdateConsumer = clientUpdateConsumer;
 
         //Player Info
         //"this" is used for whatever gridpane you are using in this instance
@@ -126,21 +133,23 @@ public class PlayerGridPane extends GridPane {
                     .setStatusEffect(statusTextField.getText())
                     .setSavingThrow(Integer.parseInt(saveThrowTextField.getText()))
                     .build();
+            clientUpdateConsumer.accept(updatePlayer);
         });
         this.setVisible(false);
     }
 
     public void update(PlayerUpdateStatsDM updatePlayerStats) {
 
-        charLevelValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerLevel()));
-        hpValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerHP()));
-        strValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerStr()));
-        dexValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerDex()));
-        conValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerCon()));
-        intValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerInt()));
-        wisValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerWis()));
-        chaValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerCha()));
-        initiativeValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerInitiative()));
+        Platform.runLater(() -> {
+            charLevelValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerLevel()));
+            hpValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerHP()));
+            strValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerStr()));
+            dexValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerDex()));
+            conValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerCon()));
+            intValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerInt()));
+            wisValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerWis()));
+            chaValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerCha()));
+            initiativeValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerInitiative()));
+        });
     }
-    
 }

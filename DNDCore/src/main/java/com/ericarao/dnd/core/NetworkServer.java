@@ -7,10 +7,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -20,6 +17,7 @@ public class NetworkServer {
     //Variables
     private final int port;
     private final int threads;
+    private final ConcurrentLinkedQueue<ServerResponse> threadSafeOutboundMsgQueue = new ConcurrentLinkedQueue<>();
     private final AtomicInteger clientCounter = new AtomicInteger();
     private final ConcurrentMap<Integer, ClientHandler> clientMap = new ConcurrentHashMap<>();
     private final BiFunction<Integer, NetworkPacket, Optional<ServerResponse>> packetProcessor;
@@ -46,6 +44,10 @@ public class NetworkServer {
 
     public void shutdown() {
         running = false;
+    }
+
+    public void enqueueMsg(ServerResponse serverResponse) {
+        threadSafeOutboundMsgQueue.add(serverResponse);
     }
 
     private ClientHandler createHandler(Socket socket) {
@@ -88,5 +90,11 @@ public class NetworkServer {
             // stop our current clients
             clientMap.values().forEach(ClientHandler::shutdown);
         }
+    }
+
+    private void processEnqueuedPacket() {
+        threadSafeOutboundMsgQueue.forEach(serverResponse -> {
+            serverResponse.getClientIds().forEach(id -> clientMap.get(id).enqueueNetworkPacket(serverResponse.getResponse()));
+        });
     }
 }

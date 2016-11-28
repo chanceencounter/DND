@@ -19,6 +19,7 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public class ServerView {
 
@@ -38,9 +39,9 @@ public class ServerView {
         return scene;
     }
 
-    public void addPlayer(int id, RegisterPlayer registerPlayer) {
+    public void addPlayer(int id, RegisterPlayer registerPlayer, Consumer<ClientUpdate> clientUpdateConsumer) {
 
-        PlayerGridPane newPlayerGridPane = new PlayerGridPane(registerPlayer);
+        PlayerGridPane newPlayerGridPane = new PlayerGridPane(registerPlayer, clientUpdateConsumer);
         //If Value is not null, exit.
         if (playerMapping.putIfAbsent(id, newPlayerGridPane) != null) {
             return;
@@ -96,14 +97,6 @@ public class ServerView {
         root.getChildren().add(vBox);
 
         return new Scene(root, 500, 500);
-    }
-
-    //Setters
-    //TODO: Write Method for "Recieve Query for Credentials or ClientUpdate"
-    //Method for Comparing Credentials
-    public boolean compareCredentials(String inputPassword, String dmPassword,
-                                      String inputIPAddress, String dmIPAddress) {
-        return (inputPassword.equals(dmPassword) && inputIPAddress.equals(dmIPAddress));
     }
 
     //Method for Updating Player
