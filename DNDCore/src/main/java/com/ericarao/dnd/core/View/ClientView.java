@@ -121,7 +121,7 @@ public class ClientView {
         grid.add(initiativeTextField, 1, 11);
 
         //Stuff from the Server
-        Label hpDamageLabel = new Label("HP Damage:");
+        Label hpDamageLabel = new Label("Current HP:");
         grid.add(hpDamageLabel, 0, 12);
         hpDamageUpdateLabel = new Label();
         grid.add(hpDamageUpdateLabel, 1, 12);
