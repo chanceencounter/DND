@@ -37,6 +37,8 @@ public class ClientModeController {
             case PlayerLoginResponse:
                 loginResponseConsumer.accept((PlayerLoginResponse) networkPacket);
                 break;
+            case ClientUpdate:
+                break;
             case RegisterPlayerResponse:
                 RegisterPlayerResponse response = (RegisterPlayerResponse) networkPacket;
                 if (response.getSuccess()) {

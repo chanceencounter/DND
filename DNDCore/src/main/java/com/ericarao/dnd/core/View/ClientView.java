@@ -125,6 +125,22 @@ public class ClientView {
         TextField initiativeTextField = new TextField();
         grid.add(initiativeTextField, 1, 11);
 
+        //Stuff from the Server
+        Label hpDamageLabel = new Label("HP Damage:");
+        grid.add(hpDamageLabel, 0, 12);
+        Label hpDamageUpdateLabel = new Label();
+        grid.add(hpDamageUpdateLabel, 1, 12);
+
+        Label statusEffectsLabel = new Label("Status Effects:");
+        grid.add(statusEffectsLabel, 0, 13);
+        Label statusEffectsUpdateLabel = new Label();
+        grid.add(statusEffectsUpdateLabel, 1, 13);
+
+        Label saveRollLabel = new Label("Save Roll:");
+        grid.add(saveRollLabel, 0, 14);
+        Label saveRollUpdateLabel = new Label();
+        grid.add(saveRollUpdateLabel, 1, 14);
+
 
         Button btn = new Button("Submit Change");
         btn.setId(SUBMIT_CHANGE_BUTTON);
@@ -153,7 +169,7 @@ public class ClientView {
                     .setPlayerInt(Integer.parseInt(intTextField.getText()))
                     .setPlayerWis(Integer.parseInt(wisTextField.getText()))
                     .setPlayerCha(Integer.parseInt(chaTextField.getText()))
-                    .setPlayerInitiative(Integer.parseInt(initiativeTextField.getText()))
+                    .setPlayerInitiative(Integer.parseInt(statusEffectsUpdateLabel.getText()))
                     .build();
 
             submitRegisterPlayer(registerPlayer);
