@@ -170,7 +170,7 @@ public class ClientView {
             submitRegisterPlayer(registerPlayer);
         });
 
-        return new Scene(grid, 500, 550);
+        return new Scene(grid, 500, 600);
     }
 
     private void submitRegisterPlayer(RegisterPlayer registerPlayer) {
