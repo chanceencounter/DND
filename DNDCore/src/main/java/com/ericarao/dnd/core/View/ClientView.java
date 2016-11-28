@@ -4,6 +4,7 @@ import com.ericarao.dnd.core.model.*;
 
 import static javafx.geometry.HPos.RIGHT;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -24,31 +25,12 @@ import java.util.function.Consumer;
 public class ClientView {
     private static final String SUBMIT_CHANGE_BUTTON = "submit-change";
 
-    private PlayerLoginCredentials playerLoginCredentialsObject;
-    private DMLoginCredentials dmLoginCredentials;
     private Consumer<RegisterPlayer> registerPlayerConsumer;
     private Scene scene;
-
-    //Setters
-    //Set visibility
-    public void setVisibility(Pane pane, ComboBox comboBox, Label label) {
-
-        //Set Label
-        label.setText("viewCharacter: " + comboBox.getValue());
-
-        // Make all children invisible
-        for (Node node : pane.getChildren()) {
-            node.setVisible(false);
-        }
-        // make the selected rectangle visible
-        int selectedIndex = comboBox.getSelectionModel()
-                .selectedIndexProperty().getValue();
-        pane.getChildren().get(selectedIndex).setVisible(true);
-    }
-
-    public void setRegisterPlayerCallback(Consumer<RegisterPlayer> registerPlayerConsumer) {
-        this.registerPlayerConsumer = registerPlayerConsumer;
-    }
+    private Label hpDamageUpdateLabel;
+    private Label statusEffectsUpdateLabel;
+    private Label saveRollUpdateLabel;
+    private TextField hpTextField;
 
     public Scene getScene() {
         if (scene == null) {
@@ -56,6 +38,19 @@ public class ClientView {
         }
 
         return scene;
+    }
+
+    //Setters
+    public void setRegisterPlayerCallback(Consumer<RegisterPlayer> registerPlayerConsumer) {
+        this.registerPlayerConsumer = registerPlayerConsumer;
+    }
+
+    public void updateClientFromDM(ClientUpdate clientUpdate) {
+        Platform.runLater(() -> {
+            hpDamageUpdateLabel.setText(String.valueOf(Integer.parseInt(hpTextField.getText()) - clientUpdate.getDamage()));
+            statusEffectsUpdateLabel.setText(String.valueOf(clientUpdate.getStatusEffect()));
+            saveRollUpdateLabel.setText(String.valueOf(clientUpdate.getSavingThrow()));
+        });
     }
 
     private Scene initClientScene() {
@@ -87,7 +82,7 @@ public class ClientView {
 
         Label hpLabel = new Label("Character HP:");
         grid.add(hpLabel, 0, 4);
-        TextField hpTextField = new TextField();
+        hpTextField = new TextField();
         grid.add(hpTextField, 1, 4);
 
         Label strLabel = new Label("STR:");
@@ -128,17 +123,19 @@ public class ClientView {
         //Stuff from the Server
         Label hpDamageLabel = new Label("HP Damage:");
         grid.add(hpDamageLabel, 0, 12);
-        Label hpDamageUpdateLabel = new Label();
+        hpDamageUpdateLabel = new Label();
         grid.add(hpDamageUpdateLabel, 1, 12);
+        Label totalHP = new Label("/ " + hpTextField.getText());
+        grid.add(totalHP, 2, 12);
 
         Label statusEffectsLabel = new Label("Status Effects:");
         grid.add(statusEffectsLabel, 0, 13);
-        Label statusEffectsUpdateLabel = new Label();
+        statusEffectsUpdateLabel = new Label();
         grid.add(statusEffectsUpdateLabel, 1, 13);
 
         Label saveRollLabel = new Label("Save Roll:");
         grid.add(saveRollLabel, 0, 14);
-        Label saveRollUpdateLabel = new Label();
+        saveRollUpdateLabel = new Label();
         grid.add(saveRollUpdateLabel, 1, 14);
 
 
