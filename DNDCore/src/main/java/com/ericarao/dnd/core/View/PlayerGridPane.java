@@ -130,6 +130,7 @@ public class PlayerGridPane extends GridPane {
     }
 
     public void update(UpdatePlayerStats updatePlayerStats) {
+
         charLevelValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerLevel()));
         hpValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerHP()));
         strValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerStr()));
@@ -139,6 +140,11 @@ public class PlayerGridPane extends GridPane {
         wisValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerWis()));
         chaValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerCha()));
         initiativeValueLabel.setText(String.valueOf(updatePlayerStats.getPlayerInitiative()));
+
+        //Remember to add these to the client view
+        damageTextField.setText(String.valueOf(updatePlayerStats.getDamageHP()));
+        statusTextField.setText(String.valueOf(updatePlayerStats.getStatusEffect()));
+        saveThrowTextField.setText(String.valueOf(updatePlayerStats.getSavingThrow()));
     }
     
 }

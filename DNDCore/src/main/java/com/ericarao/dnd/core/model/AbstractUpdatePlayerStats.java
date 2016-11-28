@@ -14,6 +14,10 @@ public abstract class AbstractUpdatePlayerStats implements NetworkPacket {
     public abstract int getPlayerWis();
     public abstract int getPlayerCha();
     public abstract int getPlayerInitiative();
+    public abstract int getDamageHP();
+    public abstract String getStatusEffect();
+    public abstract int getSavingThrow();
+
 
     @Override
     @Value.Derived

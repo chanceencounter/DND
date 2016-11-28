@@ -2,6 +2,8 @@ package com.ericarao.dnd.core.View;
 
 import com.ericarao.dnd.core.model.*;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,9 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -21,28 +21,13 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static javafx.geometry.HPos.RIGHT;
-
 public class ServerView {
-    private static final String VBOX_ID = "vbox.id";
-
-    //Variables for Tracking Players
-    private int numPlayers;
-    private int currentPlayerNum;
-    private RegisterPlayer currentPlayer;
-
-    //Credential Objects
-    private DMLoginCredentials dmLoginCredentialsObject;
-
-    //Login Credentials
-    private String dmIPAddress;
-    private String dmPassword;
 
     //View Specific
-    private Map<Integer, RegisterPlayer> playerMapping = new ConcurrentHashMap<>();
-    private StackPane stack = new StackPane();
-    private ComboBox comboBox = new ComboBox();
-    private Label label = new Label();
+    private final Map<Integer, RegisterPlayer> playerMapping = new ConcurrentHashMap<>();
+    private final StackPane stack = new StackPane();
+    private final Label label = new Label();
+    private final ObservableList<PlayerComboBoxItem> comboBoxItems = FXCollections.observableArrayList();
 
     private Scene scene;
 
@@ -63,10 +48,9 @@ public class ServerView {
         Platform.runLater(() -> {
             stack.getChildren().add(id, new PlayerGridPane(playerMapping.get(id)));
             //Get Pane Player Name
-            comboBox.getItems().add(id, playerMapping.get(id).getPlayerName());
-            comboBox.setValue(String.valueOf(playerMapping.get(id).getPlayerName()));
+            comboBoxItems.add(new PlayerComboBoxItem(id, registerPlayer.getPlayerName()));
             label.setText(String.valueOf(playerMapping.get(id).getPlayerName()));
-            setVisibility(stack, comboBox, label);
+            //setVisibility(stack, comboBox, label);
         });
     }
 
@@ -89,6 +73,8 @@ public class ServerView {
             e.printStackTrace();
         }
 
+        ComboBox<PlayerComboBoxItem> comboBox = new ComboBox<>();
+        comboBox.setItems(comboBoxItems);
         grid.add(comboBox, 0, 2);
 
         Button btnChange = new Button();
