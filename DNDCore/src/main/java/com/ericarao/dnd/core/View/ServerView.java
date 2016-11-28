@@ -108,6 +108,6 @@ public class ServerView {
 
     //Method for Updating Player
     public void updatePlayer(int id, PlayerUpdateStatsDM updatePlayerStats) {
-
+        playerMapping.get(id).update(updatePlayerStats);
     }
 }
