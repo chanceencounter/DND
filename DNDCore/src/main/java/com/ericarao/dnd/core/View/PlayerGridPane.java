@@ -128,6 +128,9 @@ public class PlayerGridPane extends GridPane {
         btn.setOnAction(e -> {
             actiontarget.setFill(Color.FIREBRICK);
             actiontarget.setText("Change submitted (button clicked).");
+            if (saveThrowTextField.getText() == null) {
+                saveThrowTextField.setText("0");
+            }
             ClientUpdate updatePlayer = ClientUpdate.builder()
                     .setDamage(Integer.parseInt(damageTextField.getText()))
                     .setStatusEffect(statusTextField.getText())
