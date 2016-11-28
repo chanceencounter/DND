@@ -47,7 +47,7 @@ public class ServerView {
             return;
         }
         Platform.runLater(() -> {
-            stack.getChildren().add(newPlayerGridPane));
+            stack.getChildren().add(newPlayerGridPane);
             //Get Pane Player Name
             comboBoxItems.add(new PlayerComboBoxItem(id, registerPlayer.getPlayerName()));
             label.setText(String.valueOf(registerPlayer.getPlayerName()));
