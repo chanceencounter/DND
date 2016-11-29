@@ -30,6 +30,7 @@ public class MainApplication extends Application {
         loginView.setPlayerLoginCallback(this::handlePlayerLogin);
 
         primaryStage.setScene(loginView.getScene());
+        primaryStage.setOnCloseRequest(e -> Platform.exit());
         primaryStage.show();
     }
 
