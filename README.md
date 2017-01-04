@@ -34,5 +34,6 @@
 
 ###Other Tasks
 After submitting the semester project clean up code with the following:
+
 1. Sanitize inputs
 2. Write unit tests, look into JUnit
