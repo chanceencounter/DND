@@ -28,6 +28,11 @@
   * ~~Add maven artifact to deps~~
   * ~~Create simple example~~
   * ~~Verify that maven is including generated sources properly~~
-3. Get SLF4J maven artifact imported
-4. Create enum of data types and associated immutables pojo’s to transmit data between client and server.  
-5. Get serialization and deserialization working for sending pojo’s over the wire.
+3. ~~Get SLF4J maven artifact imported~~
+4. ~~Create enum of data types and associated immutables pojo’s to transmit data between client and server.  ~~
+5. ~~Get serialization and deserialization working for sending pojo’s over the wire.~~
+
+###Other Tasks
+After submitting the semester project clean up code with the following:
+1. Sanitize inputs
+2. Write unit tests, look into JUnit
