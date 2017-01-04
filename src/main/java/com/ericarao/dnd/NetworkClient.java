@@ -17,16 +17,19 @@ public class NetworkClient {
     //Variables
     private final String hostName;
     private final int port;
+    private final SocketFactory socketFactory;
     private final Function<NetworkPacket, Optional<NetworkPacket>> networkPacketConsumer;
     private final ConcurrentLinkedQueue<NetworkPacket> threadSafeOutboundMsgQueue = new ConcurrentLinkedQueue<>();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private volatile boolean running = false;
 
 
-    public NetworkClient(String hostName, int port, Function<NetworkPacket, Optional<NetworkPacket>> networkPacketConsumer) {
+    public NetworkClient(String hostName, int port, Function<NetworkPacket, Optional<NetworkPacket>> networkPacketConsumer,
+                         SocketFactory socketFactory) {
         this.hostName = hostName;
         this.port = port;
         this.networkPacketConsumer = networkPacketConsumer;
+        this.socketFactory = socketFactory;
     }
 
     public void run() {
@@ -55,7 +58,7 @@ public class NetworkClient {
     }
 
     private void runInternal() {
-        try(Socket clientSocket = new Socket(hostName, port);
+        try(Socket clientSocket = socketFactory.create(hostName, port);
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
             while (running) {

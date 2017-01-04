@@ -16,7 +16,7 @@ public class ClientModeController {
 
     public ClientModeController(ClientView clientView, String hostName, int port) {
         this.clientView = clientView;
-        this.networkClient = new NetworkClient(hostName, port, this::handleClientData);
+        this.networkClient = new NetworkClient(hostName, port, this::handleClientData, new SocketFactory()); //TODO USE ACTUAL SOCKET FACTORY
         clientView.setRegisterPlayerCallback(this::handleRegisterPlayer);
     }
 
