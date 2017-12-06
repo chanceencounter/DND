@@ -1,7 +1,7 @@
-*Final semester project
+*Final semester project*
 
-#DND
-###Major Function pieces of the project
+# DND
+### Major Function pieces of the project
 1. UI  
   1. Player (Client)
     * Show them the important information about their character and events
@@ -22,7 +22,7 @@
   * Support direct message (ability to send data to specific client)
   * Define information payload types (start small, make it extensible)
 
-###Tasks
+### Tasks
 1. ~~Set up git repo and push current code there~~
 2. ~~Get basic pojo library (http://immutables.github.io/) set up and working~~
   * ~~Add maven artifact to deps~~
@@ -32,9 +32,9 @@
 4. ~~Create enum of data types and associated immutables pojo’s to transmit data between client and server.  ~~
 5. ~~Get serialization and deserialization working for sending pojo’s over the wire.~~
 
-###Other Tasks
+### Other Tasks
 After submitting the semester project clean up code with the following:
 
 1. Sanitize inputs
-2. Write unit tests, look into JUnit
+2. Write unit tests
   * Refactor code to make it more conducive to testing
